@@ -1,8 +1,11 @@
 package gr.aueb.cf.noteboard.model;
 
-import gr.aueb.cf.noteboard.core.enums.ReactionType;
+import gr.aueb.cf.noteboard.model.static_data.Reaction;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -27,13 +30,24 @@ public class Views extends AbstractEntity {
 
     private Boolean isRead;
 
-    @Enumerated(EnumType.STRING)
-    private ReactionType reaction;
+    @ManyToMany(mappedBy = "views")
+    private Set<Reaction> reactions = new HashSet<>();
 
     @PrePersist
     public void initialize() {
         if (isRead == null) {
             isRead = false;
         }
+    }
+
+    public void addReaction(Reaction reaction) {
+        if (reactions == null) reactions = new HashSet<>();
+        reactions.add(reaction);
+        reaction.getViews().add(this);
+    }
+
+    public void removeReaction(Reaction reaction) {
+        reactions.remove(reaction);
+        reaction.getViews().remove(this);
     }
 }
