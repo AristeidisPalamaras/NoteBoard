@@ -15,7 +15,10 @@ import lombok.Setter;
 public class MessageInsertDTO {
 
     @NotNull(message = "Author can not be missing")
-    private UserReadOnlyDTO author;
+    private UserUpdateDTO author;
+
+    @NotNull(message = "Group can not be missing")
+    private GroupUpdateDTO group;
 
     @NotEmpty(message = "message can not be empty")
     @Size(max = 480, message = "message must be less than 480 characters")

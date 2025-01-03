@@ -20,9 +20,9 @@ public class ViewsUpdateDTO {
     @NotNull(message = "Id can not be empty")
     private Long id;
 
-//    private Message message;
-//    private User user;
+    private MessageUpdateDTO message;
+    private UserUpdateDTO user;
 
-//    private Boolean isRead;
+    private Boolean isRead;
 //    private Set<Reaction> reactions; //todo can't figure that out
 }

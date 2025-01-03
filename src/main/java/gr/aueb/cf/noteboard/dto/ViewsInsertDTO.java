@@ -18,10 +18,10 @@ import java.util.Set;
 public class ViewsInsertDTO {
 
     @NotNull(message = "Message can not be missing")
-    private Message message;
+    private MessageUpdateDTO message;
 
     @NotNull(message = "User can not be missing")
-    private User user;
+    private UserUpdateDTO user;
 
-    private Set<Reaction> reactions;
+//    private Set<Reaction> reactions; //todo can't fingure that out
 }
