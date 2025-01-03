@@ -24,5 +24,5 @@ public class ViewsUpdateDTO {
 //    private User user;
 
 //    private Boolean isRead;
-    private Set<Reaction> reactions;
+//    private Set<Reaction> reactions; //todo can't figure that out
 }

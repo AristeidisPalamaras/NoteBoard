@@ -1,6 +1,5 @@
 package gr.aueb.cf.noteboard.dto;
 
-import gr.aueb.cf.noteboard.model.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,7 +21,7 @@ public class GroupInsertDTO {
     private String title;
 
     @NotNull(message = "Owner can not be missing")
-    private User owner;
+    private UserUpdateDTO owner;
 
-    private Set<User> members;
+    private Set<UserUpdateDTO> members;
 }

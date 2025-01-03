@@ -1,8 +1,5 @@
 package gr.aueb.cf.noteboard.dto;
 
-import gr.aueb.cf.noteboard.model.Group;
-import gr.aueb.cf.noteboard.model.Message;
-import gr.aueb.cf.noteboard.model.Views;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,8 +21,8 @@ public class UserUpdateDTO {
     @NotEmpty(message = "Username can not be empty")
     private String username;
 
-    private Set<Group> ownedGroups;
-    private Set<Group> joinedGroups;
-    private Set<Message> authoredMessages;
-    private Set<Views> views;
+    private Set<GroupInsertDTO> ownedGroups;
+    private Set<GroupInsertDTO> joinedGroups;
+    private Set<MessageInsertDTO> authoredMessages;
+    private Set<ViewsInsertDTO> views;
 }

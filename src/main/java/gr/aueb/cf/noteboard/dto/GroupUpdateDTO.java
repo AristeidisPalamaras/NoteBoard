@@ -1,7 +1,5 @@
 package gr.aueb.cf.noteboard.dto;
 
-import gr.aueb.cf.noteboard.model.Message;
-import gr.aueb.cf.noteboard.model.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +18,6 @@ public class GroupUpdateDTO {
     private Long id;
 
 //    private String title;
-//    private User owner;
 
-    private Set<User> members;
-    private Set<Message> messages;
+    private Set<UserUpdateDTO> members;
 }

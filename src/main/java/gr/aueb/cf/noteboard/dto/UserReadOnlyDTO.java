@@ -1,16 +1,10 @@
 package gr.aueb.cf.noteboard.dto;
 
-import gr.aueb.cf.noteboard.model.Group;
-import gr.aueb.cf.noteboard.model.Message;
-import gr.aueb.cf.noteboard.model.Views;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -22,8 +16,8 @@ public class UserReadOnlyDTO {
     private Long id;
     private String username;
 
-    private Set<Group> ownedGroups;
-    private Set<Group> joinedGroups;
-    private Set<Message> authoredMessages;
-    private Set<Views> views;
+    private Set<GroupReadOnlyDTO> ownedGroups;
+    private Set<GroupReadOnlyDTO> joinedGroups;
+    private Set<MessageReadOnlyDTO> authoredMessages;
+    private Set<ViewsReadOnlyDTO> views;
 }

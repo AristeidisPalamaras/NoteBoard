@@ -1,8 +1,5 @@
 package gr.aueb.cf.noteboard.dto;
 
-import gr.aueb.cf.noteboard.model.Group;
-import gr.aueb.cf.noteboard.model.User;
-import gr.aueb.cf.noteboard.model.Views;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +16,9 @@ public class MessageReadOnlyDTO {
     private Long id;
     private String text;
 
-    private User author;
-    private Group group;
-    private Set<Views> views;
+    private UserReadOnlyDTO author;
+    private GroupReadOnlyDTO group;
+    private Set<ViewsReadOnlyDTO> views;
 
     private Boolean isCompleted;
 }
