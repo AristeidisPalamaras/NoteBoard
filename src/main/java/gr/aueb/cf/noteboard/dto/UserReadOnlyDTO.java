@@ -19,5 +19,5 @@ public class UserReadOnlyDTO {
     private Set<GroupReadOnlyDTO> ownedGroups;
     private Set<GroupReadOnlyDTO> joinedGroups;
     private Set<MessageReadOnlyDTO> authoredMessages;
-    private Set<ViewsReadOnlyDTO> views;
+    private Set<ReactionReadOnlyDTO> reactions;
 }

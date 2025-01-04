@@ -6,7 +6,6 @@ import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.dto.UserUpdateDTO;
 import gr.aueb.cf.noteboard.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +14,7 @@ public class UserMapper {
 
     private final GroupMapper groupMapper;
     private final MessageMapper messageMapper;
-    private final ViewsMapper viewsMapper;
+    private final ReactionMapper reactionMapper;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -38,8 +37,8 @@ public class UserMapper {
             dto.getAuthoredMessages().add(messageMapper.mapToMessageReadOnlyDTO(message));
         });
 
-        user.getViews().forEach(view -> {
-            dto.getViews().add(viewsMapper.mapToViewsReadOnlyDTO(view));
+        user.getReactions().forEach(view -> {
+            dto.getReactions().add(reactionMapper.mapToReactionReadOnlyDTO(view));
         });
 
         return dto;
@@ -56,32 +55,6 @@ public class UserMapper {
         return user;
     }
 
-    public User mapToUser(UserUpdateDTO dto) {
-
-        User user = new User();
-
-        user.setId(dto.getId());
-        user.setUsername(dto.getUsername());
-
-        dto.getOwnedGroups().forEach(group -> {
-           user.getOwnedGroups().add(groupMapper.mapToGroup(group));
-        });
-
-        dto.getJoinedGroups().forEach(group -> {
-            user.getJoinedGroups().add(groupMapper.mapToGroup(group));
-        });
-
-        dto.getAuthoredMessages().forEach(message -> {
-            user.getAuthoredMessages().add(messageMapper.mapToMessage(message));
-        });
-
-        dto.getViews().forEach(view -> {
-            user.getViews().add(viewsMapper.mapToViews(view));
-        });
-
-        return user;
-    }
-
     public User mapToUser(UserLoginDTO dto) {
 
         User user = new User();
@@ -90,6 +63,16 @@ public class UserMapper {
         user.setPassword(dto.getPassword());
 //        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
+
+        return user;
+    }
+
+    public User mapToUser(UserUpdateDTO dto) {
+
+        User user = new User();
+
+        user.setId(dto.getId());
+        user.setUsername(dto.getUsername());
 
         return user;
     }

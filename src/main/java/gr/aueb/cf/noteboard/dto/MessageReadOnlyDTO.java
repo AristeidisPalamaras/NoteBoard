@@ -18,7 +18,5 @@ public class MessageReadOnlyDTO {
 
     private UserReadOnlyDTO author;
     private GroupReadOnlyDTO group;
-    private Set<ViewsReadOnlyDTO> views;
-
-    private Boolean isCompleted;
+    private Set<ReactionReadOnlyDTO> reactions;
 }

@@ -27,35 +27,31 @@ public class Message extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
-    @OneToMany(mappedBy = "message")
-    private Set<Views> views = new HashSet<>();
-
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    private String text;
+    @OneToMany(mappedBy = "message")
+    private Set<Reaction> reactions = new HashSet<>();
 
-    private Boolean isCompleted;
+
+    private String text;
 
     @PrePersist
     public void initialize() {
         if (uuid == null) {
             uuid = UUID.randomUUID().toString();
         }
-        if (isCompleted == null) {
-            isCompleted = false;
-        }
     }
 
-    public void addView(Views view) {
-        if (views == null) views = new HashSet<>();
-        views.add(view);
-        view.setMessage(this);
+    public void addReaction(Reaction reaction) {
+        if (reactions == null) reactions = new HashSet<>();
+        reactions.add(reaction);
+        reaction.setMessage(this);
     }
 
-    public void removeView(Views view) {
-        views.remove(view);
-        view.setMessage(null);
+    public void removeReaction(Reaction reaction) {
+        reactions.remove(reaction);
+        reaction.setMessage(null);
     }
 }

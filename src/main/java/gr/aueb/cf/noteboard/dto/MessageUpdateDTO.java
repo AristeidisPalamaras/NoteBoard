@@ -14,8 +14,5 @@ import java.util.Set;
 @Setter
 public class MessageUpdateDTO {
 
-    @NotNull(message = "Id can not be empty")
     private Long id;
-
-    private Boolean isCompleted;
 }

@@ -19,7 +19,7 @@ public class GroupMapper {
         GroupReadOnlyDTO dto = new GroupReadOnlyDTO();
 
         dto.setId(group.getId());
-        dto.setTitle(group.getTitle());
+        dto.setName(group.getName());
         dto.setOwner(userMapper.mapToUserReadOnlyDTO(group.getOwner()));
         group.getMembers().forEach(member -> {
             dto.getMembers().add(userMapper.mapToUserReadOnlyDTO(member));
@@ -35,7 +35,7 @@ public class GroupMapper {
 
         Group group = new Group();
 
-        group.setTitle(dto.getTitle());
+        group.setName(dto.getName());
         group.setOwner(userMapper.mapToUser(dto.getOwner()));
         dto.getMembers().forEach(member -> {
             group.getMembers().add(userMapper.mapToUser(member));
@@ -47,6 +47,9 @@ public class GroupMapper {
     public Group mapToGroup(GroupUpdateDTO dto) {
 
         Group group = new Group();
+
+        group.setId(dto.getId());
+        group.setName(dto.getName());
 
         dto.getMembers().forEach(member -> {
             group.getMembers().add(userMapper.mapToUser(member));

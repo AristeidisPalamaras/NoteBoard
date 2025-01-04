@@ -14,7 +14,7 @@ import java.util.Set;
 public class GroupReadOnlyDTO {
 
     private Long id;
-    private String title;
+    private String name;
     private UserReadOnlyDTO owner;
     private Set<UserReadOnlyDTO> members;
     private Set<MessageReadOnlyDTO> messages;

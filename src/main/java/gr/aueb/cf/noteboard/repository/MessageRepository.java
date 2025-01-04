@@ -18,18 +18,4 @@ public interface MessageRepository extends JpaRepository<Message, Long>,
     Set<Message> findAllByGroupAndAuthor(Group group, User author);
     Set<Message> findAllByGroupAndAuthorOrderByCreatedAtDesc(Group group, User author); //todo Do I need this, or can I order in Service layer?
     Set<Message> findAllByGroupAndAuthorOrderByCreatedAtAsc(Group group, User author); //todo Do I need this, or can I order in Service layer?
-
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND v.isRead = false")
-    Set<Message> findUnreadByGroup(Group group);
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND v.isRead = false ORDER BY m.createdAt DESC") //todo Do I need this, or can I order in Service layer?
-    Set<Message> findUnreadByGroupOrderByCreatedAtDesc(Group group);
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND v.isRead = false ORDER BY m.createdAt") //todo Do I need this, or can I order in Service layer?
-    Set<Message> findUnreadByGroupOrderByCreatedAtAsc(Group group);
-
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND m.author = ?2 AND v.isRead = false")
-    Set<Message> findUnreadByGroupAndAuthor(Group group, User author);
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND m.author = ?2 AND v.isRead = false ORDER BY m.createdAt DESC")
-    Set<Message> findUnreadByGroupAndAuthorOrderByCreatedAtDesc(Group group, User author); //todo Do I need this, or can I order in Service layer?
-    @Query("SELECT m FROM Message m JOIN Views v WHERE m.group = ?1 AND m.author = ?2 AND v.isRead = false ORDER BY m.createdAt")
-    Set<Message> findUnreadByGroupAndAuthorOrderByCreatedAtAsc(Group group, User author); //todo Do I need this, or can I order in Service layer?
 }

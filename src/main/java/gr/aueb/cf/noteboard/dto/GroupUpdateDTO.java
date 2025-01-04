@@ -17,7 +17,7 @@ public class GroupUpdateDTO {
     @NotNull(message = "Id can not be empy")
     private Long id;
 
-//    private String title;
+    private String name;
 
     private Set<UserUpdateDTO> members;
 }

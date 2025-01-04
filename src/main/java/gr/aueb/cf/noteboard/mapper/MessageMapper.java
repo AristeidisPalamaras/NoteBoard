@@ -13,7 +13,7 @@ public class MessageMapper {
 
     private final UserMapper userMapper;
     private final GroupMapper groupMapper;
-    private final ViewsMapper viewsMapper;
+    private final ReactionMapper reactionMapper;
 
     public MessageReadOnlyDTO mapToMessageReadOnlyDTO(Message message) {
 
@@ -21,11 +21,10 @@ public class MessageMapper {
 
         dto.setId(message.getId());
         dto.setText(message.getText());
-        dto.setIsCompleted(message.getIsCompleted());
         dto.setAuthor(userMapper.mapToUserReadOnlyDTO(message.getAuthor()));
         dto.setGroup(groupMapper.mapToGroupReadOnlyDTO(message.getGroup()));
-        message.getViews().forEach(view -> {
-            dto.getViews().add(viewsMapper.mapToViewsReadOnlyDTO(view));
+        message.getReactions().forEach(view -> {
+            dto.getReactions().add(reactionMapper.mapToReactionReadOnlyDTO(view));
         });
 
         return dto;
@@ -47,7 +46,6 @@ public class MessageMapper {
         Message message = new Message();
 
         message.setId(dto.getId());
-        message.setIsCompleted(dto.getIsCompleted());
 
         return new Message();
     }

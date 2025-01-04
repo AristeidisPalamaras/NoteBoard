@@ -24,7 +24,7 @@ public class Group extends AbstractEntity {
     private String uuid;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -18,7 +18,7 @@ public class GroupInsertDTO {
 
     @NotEmpty(message = "title can not be empty")
     @Size(max = 120, message = "title must be less than 120 characters")
-    private String title;
+    private String name;
 
     @NotNull(message = "Owner can not be missing")
     private UserUpdateDTO owner;

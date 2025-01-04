@@ -2,7 +2,6 @@ package gr.aueb.cf.noteboard.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,8 +29,6 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private String password;
 
-    private Boolean isActive;
-
     @OneToMany(mappedBy = "owner")
     private Set<Group> ownedGroups = new HashSet<>();
 
@@ -42,15 +39,12 @@ public class User extends AbstractEntity {
     private Set<Message> authoredMessages = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<Views> views = new HashSet<>();
+    private Set<Reaction> reactions = new HashSet<>();
 
     @PrePersist
     public void initialize() {
         if (uuid == null) {
             uuid = UUID.randomUUID().toString();
-        }
-        if (isActive == null) {
-            isActive = true;
         }
     }
 
@@ -87,14 +81,14 @@ public class User extends AbstractEntity {
         message.setAuthor(null);
     }
 
-    public void addView(Views view) {
-        if (views == null) views = new HashSet<>();
-        views.add(view);
-        view.setUser(this);
+    public void addReaction(Reaction reaction) {
+        if (reactions == null) reactions = new HashSet<>();
+        reactions.add(reaction);
+        reaction.setUser(this);
     }
 
-    public void removeView(Views view) {
-        views.remove(view);
-        view.setUser(null);
+    public void removeReaction(Reaction reaction) {
+        reactions.remove(reaction);
+        reaction.setUser(null);
     }
 }
