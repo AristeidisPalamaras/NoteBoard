@@ -14,10 +14,11 @@ import java.util.Set;
 @Setter
 public class GroupUpdateDTO {
 
-    @NotNull(message = "Id can not be empy")
+    @NotNull(message = "Id is required")
     private Long id;
 
+    @NotNull(message = "Name is required")
     private String name;
 
-    private Set<UserUpdateDTO> members;
+    private Set<String> members;
 }

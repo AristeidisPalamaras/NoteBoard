@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -15,8 +16,9 @@ public class MessageReadOnlyDTO {
 
     private Long id;
     private String text;
+    private String author;
+    private LocalDateTime createdAt;
 
-    private UserReadOnlyDTO author;
-    private GroupReadOnlyDTO group;
-    private Set<ReactionReadOnlyDTO> reactions;
+    //    private GroupReadOnlyDTO group;
+//    private Set<ReactionReadOnlyDTO> reactions;
 }

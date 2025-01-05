@@ -13,7 +13,8 @@ import lombok.Setter;
 public class ReactionReadOnlyDTO {
 
     private Long id;
-    private MessageReadOnlyDTO message;
-    private UserReadOnlyDTO user;
+    private String user;
     private ReactionType description;
+
+    //    private MessageReadOnlyDTO message;
 }

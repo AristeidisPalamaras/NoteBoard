@@ -2,7 +2,6 @@ package gr.aueb.cf.noteboard.mapper;
 
 import gr.aueb.cf.noteboard.dto.MessageInsertDTO;
 import gr.aueb.cf.noteboard.dto.MessageReadOnlyDTO;
-import gr.aueb.cf.noteboard.dto.MessageUpdateDTO;
 import gr.aueb.cf.noteboard.model.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,32 +20,14 @@ public class MessageMapper {
 
         dto.setId(message.getId());
         dto.setText(message.getText());
-        dto.setAuthor(userMapper.mapToUserReadOnlyDTO(message.getAuthor()));
-        dto.setGroup(groupMapper.mapToGroupReadOnlyDTO(message.getGroup()));
-        message.getReactions().forEach(view -> {
-            dto.getReactions().add(reactionMapper.mapToReactionReadOnlyDTO(view));
-        });
+        dto.setAuthor(message.getAuthor().getUsername());
+        dto.setCreatedAt(message.getCreatedAt());
 
         return dto;
     }
 
-    public Message mapToMessage(MessageInsertDTO dto) {
-
-        Message message = new Message();
-
-        message.setAuthor(userMapper.mapToUser(dto.getAuthor()));
-        message.setGroup(groupMapper.mapToGroup(dto.getGroup()));
-        message.setText(dto.getText());
-
-        return message;
-    }
-
-    public Message mapToMessage(MessageUpdateDTO dto) {
-
-        Message message = new Message();
-
-        message.setId(dto.getId());
-
-        return new Message();
-    }
+//    public Message mapToMessage(MessageInsertDTO dto) {
+//
+//        return null;
+//    }
 }

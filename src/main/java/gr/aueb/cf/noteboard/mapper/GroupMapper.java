@@ -20,41 +20,24 @@ public class GroupMapper {
 
         dto.setId(group.getId());
         dto.setName(group.getName());
-        dto.setOwner(userMapper.mapToUserReadOnlyDTO(group.getOwner()));
-        group.getMembers().forEach(member -> {
-            dto.getMembers().add(userMapper.mapToUserReadOnlyDTO(member));
-        });
-        group.getMessages().forEach(message -> {
-            dto.getMessages().add(messageMapper.mapToMessageReadOnlyDTO(message));
-        });
+//        dto.setOwner(userMapper.mapToUserReadOnlyDTO(group.getOwner()));
+//        group.getMembers().forEach(member -> {
+//            dto.getMembers().add(userMapper.mapToUserReadOnlyDTO(member));
+//        });
+//        group.getMessages().forEach(message -> {
+//            dto.getMessages().add(messageMapper.mapToMessageReadOnlyDTO(message));
+//        });
 
         return dto;
     }
 
-    public Group mapToGroup(GroupInsertDTO dto) {
+//    public Group mapToGroup(GroupInsertDTO dto) {
+//
+//        return null;
+//    }
 
-        Group group = new Group();
-
-        group.setName(dto.getName());
-        group.setOwner(userMapper.mapToUser(dto.getOwner()));
-        dto.getMembers().forEach(member -> {
-            group.getMembers().add(userMapper.mapToUser(member));
-        });
-
-        return group;
-    }
-
-    public Group mapToGroup(GroupUpdateDTO dto) {
-
-        Group group = new Group();
-
-        group.setId(dto.getId());
-        group.setName(dto.getName());
-
-        dto.getMembers().forEach(member -> {
-            group.getMembers().add(userMapper.mapToUser(member));
-        });
-
-        return group;
-    }
+//    public Group mapToGroup(GroupUpdateDTO dto) {
+//
+//        return null;
+//    }
 }

@@ -16,12 +16,12 @@ import java.util.Set;
 @Setter
 public class GroupInsertDTO {
 
-    @NotEmpty(message = "title can not be empty")
-    @Size(max = 120, message = "title must be less than 120 characters")
+    @NotEmpty(message = "Name is required")
+    @Size(max = 120, message = "Name must be less than 120 characters")
     private String name;
 
-    @NotNull(message = "Owner can not be missing")
-    private UserUpdateDTO owner;
+    @NotNull(message = "Owner is required")
+    private String owner;
 
-    private Set<UserUpdateDTO> members;
+    private Set<String> members;
 }

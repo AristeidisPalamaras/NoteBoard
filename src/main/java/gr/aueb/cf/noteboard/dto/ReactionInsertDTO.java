@@ -13,11 +13,11 @@ import lombok.Setter;
 @Setter
 public class ReactionInsertDTO {
 
-    @NotNull(message = "The message i required")
-    private MessageUpdateDTO message;
+    @NotNull(message = "The message is required")
+    private Long messageId;
 
     @NotNull(message = "The user is required")
-    private UserUpdateDTO user;
+    private String user;
 
     @NotNull(message = "The escription is required")
     private ReactionType description;

@@ -18,20 +18,14 @@ public class ReactionMapper {
         ReactionReadOnlyDTO dto = new ReactionReadOnlyDTO();
 
         dto.setId(reaction.getId());
-        dto.setMessage(messageMapper.mapToMessageReadOnlyDTO(reaction.getMessage()));
-        dto.setUser(userMapper.mapToUserReadOnlyDTO(reaction.getUser()));
+        dto.setDescription(reaction.getDescription());
+        dto.setUser(reaction.getUser().getUsername());
 
         return new ReactionReadOnlyDTO();
     }
 
-    public Reaction mapToReaction(ReactionInsertDTO dto) {
-
-        Reaction reaction = new Reaction();
-
-        reaction.setMessage(messageMapper.mapToMessage(dto.getMessage()));
-        reaction.setUser(userMapper.mapToUser(dto.getUser()));
-        reaction.setDescription(dto.getDescription());
-
-        return reaction;
-    }
+//    public Reaction mapToReaction(ReactionInsertDTO dto) {
+//
+//        return null;
+//    }
 }

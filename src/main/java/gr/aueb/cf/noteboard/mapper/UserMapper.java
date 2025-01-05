@@ -3,7 +3,6 @@ package gr.aueb.cf.noteboard.mapper;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserLoginDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
-import gr.aueb.cf.noteboard.dto.UserUpdateDTO;
 import gr.aueb.cf.noteboard.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,22 +23,6 @@ public class UserMapper {
 
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-
-        user.getOwnedGroups().forEach(group -> {
-           dto.getOwnedGroups().add(groupMapper.mapToGroupReadOnlyDTO(group));
-        });
-
-        user.getJoinedGroups().forEach(group -> {
-            dto.getJoinedGroups().add(groupMapper.mapToGroupReadOnlyDTO(group));
-        });
-
-        user.getAuthoredMessages().forEach(message -> {
-            dto.getAuthoredMessages().add(messageMapper.mapToMessageReadOnlyDTO(message));
-        });
-
-        user.getReactions().forEach(view -> {
-            dto.getReactions().add(reactionMapper.mapToReactionReadOnlyDTO(view));
-        });
 
         return dto;
     }
@@ -63,16 +46,6 @@ public class UserMapper {
         user.setPassword(dto.getPassword());
 //        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-
-        return user;
-    }
-
-    public User mapToUser(UserUpdateDTO dto) {
-
-        User user = new User();
-
-        user.setId(dto.getId());
-        user.setUsername(dto.getUsername());
 
         return user;
     }

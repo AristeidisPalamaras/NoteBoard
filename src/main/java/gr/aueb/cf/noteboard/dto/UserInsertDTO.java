@@ -14,16 +14,16 @@ import lombok.Setter;
 @Setter
 public class UserInsertDTO {
 
-    @NotEmpty(message = "Username can not be empty")
+    @NotEmpty(message = "Username is required")
     @Email(message = "Invalid username")
     private String username;
 
-    @NotEmpty(message = "Password cannot be empty")
+    @NotEmpty(message = "Password is required")
     @Pattern(regexp = "^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\\d)(?=.*?[@#$!%&*]).{8,}$",
             message = "Invalid password")
     private String password;
 
-    @NotEmpty(message = "Password can not be empty")
+    @NotEmpty(message = "Confirm password is required")
     @Pattern(regexp = "^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\\d)(?=.*?[@#$!%&*]).{8,}$",
             message = "Invalid password")
     private String confirmPassword;
