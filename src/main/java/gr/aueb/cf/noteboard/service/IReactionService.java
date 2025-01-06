@@ -12,4 +12,5 @@ public interface IReactionService {
 
     ReactionReadOnlyDTO insertReaction(ReactionInsertDTO reactionInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException;
     List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId);
+    List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId);
 }

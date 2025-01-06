@@ -68,4 +68,17 @@ public class ReactionServiceImpl implements IReactionService {
 
         return reactions;
     }
+
+    @Transactional
+    public List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId) {
+
+        List<ReactionReadOnlyDTO> reactions;
+
+        reactions = reactionRepository.findReactionsByMessageIdAndUserId(messageId, userId)
+                .stream()
+                .map(reactionMapper::mapToReactionReadOnlyDTO)
+                .collect(Collectors.toList());
+
+        return reactions;
+    }
 }
