@@ -10,7 +10,6 @@ import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
 import gr.aueb.cf.noteboard.service.IGroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,7 +27,12 @@ public class GroupRestController {
 
     private final IGroupService groupService;
 
-    //get groups by user
+    //get groups
+    //TODO choose one of these two implementations:
+    //either implement a single end-point that finds both the list of owned groups and the list of joined groups, and packages them inside a Map
+    //or implement two end-points, one to find the list of owned groups and one to find the list of joined groups
+
+    //get groups by user (single end-point implementation)
     @GetMapping("/groups")
     public ResponseEntity<Map<String, Object>> getGroups(@RequestParam("userId") Long userId) {
 
@@ -43,7 +47,7 @@ public class GroupRestController {
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
-    //get groups by owner
+    //get groups by owner (double end-point implementation)
     @GetMapping("/ownedGroups")
     public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroups(@RequestParam("ownerId") Long ownerId) {
 
@@ -51,7 +55,7 @@ public class GroupRestController {
         return new ResponseEntity<>(ownedGroups, HttpStatus.OK);
     }
 
-    //get groups by member
+    //get groups by member (double end-point implementation)
     @GetMapping("/joinedGroups")
     public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroups(@RequestParam("memberId") Long memberId) {
 
@@ -69,7 +73,7 @@ public class GroupRestController {
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
 
-    //todo DOUBLR-CHECK post group
+    //todo DOUBLE-CHECK post group
     @PostMapping("/groups/save")
     public ResponseEntity<GroupReadOnlyDTO> saveGroup(
             @Valid @RequestBody GroupInsertDTO groupInsertDTO,

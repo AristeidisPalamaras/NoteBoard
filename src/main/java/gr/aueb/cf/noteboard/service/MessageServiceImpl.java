@@ -73,7 +73,7 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
-    public Page<MessageReadOnlyDTO> getMessagesByAuthorId(int page, Long groupId, String sortDirection, Long authorId)
+    public Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorId(int page, Long groupId, Long authorId, String sortDirection)
             throws AppObjectNotFoundException {
 
         Pageable pageable = getPageable(page, sortDirection);
@@ -92,7 +92,7 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
-    public Page<MessageReadOnlyDTO> getMessagesByAuthorUsernameLike(int page, Long groupId, String sortDirection, String username) {
+    public Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorUsernameLike(int page, Long groupId, String username, String sortDirection) {
 
         Pageable pageable = getPageable(page, sortDirection);
 
