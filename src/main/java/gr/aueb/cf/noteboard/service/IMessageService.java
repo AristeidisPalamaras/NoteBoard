@@ -14,6 +14,6 @@ public interface IMessageService {
 
     MessageReadOnlyDTO insertMessage(MessageInsertDTO messageInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException;
     MessageReadOnlyDTO getMessageById(Long id) throws AppObjectNotFoundException;
-    Page<MessageReadOnlyDTO> getMessages(int page, int size, Long groupId, String sortDirection, Long authorId);
+    Page<MessageReadOnlyDTO> getMessages(int page, Long groupId, String sortDirection, Long authorId);
     void deleteMessage(Long id) throws AppObjectNotFoundException;
 }

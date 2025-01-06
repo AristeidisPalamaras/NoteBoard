@@ -1,5 +1,6 @@
 package gr.aueb.cf.noteboard.service;
 
+import gr.aueb.cf.noteboard.core.pageables.MessagePageable;
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
@@ -19,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -73,17 +72,20 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
-    public Page<MessageReadOnlyDTO> getMessages(int page, int size, Long groupId, String sortDirection, Long authorId) {
+    public Page<MessageReadOnlyDTO> getMessages(int page, Long groupId, String sortDirection, Long authorId) {
 
-        String sortBy = "createdAt";
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        MessagePageable messagePageable = new MessagePageable();
+        messagePageable.setPage(page);
+
+        if (sortDirection != null && !sortDirection.isBlank()) {
+            messagePageable.setSortDirection(Sort.Direction.fromString(sortDirection));
+        }
 
         if ( authorId != null ) {
-            return messageRepository.findMessagesByGroupAndAuthor(groupId, authorId, pageable)
+            return messageRepository.findMessagesByGroupAndAuthor(groupId, authorId, messagePageable.getPageable())
                     .map(messageMapper::mapToMessageReadOnlyDTO);
         }
-        return messageRepository.findMessagesByGroup(groupId, pageable)
+        return messageRepository.findMessagesByGroup(groupId, messagePageable.getPageable())
                 .map(messageMapper::mapToMessageReadOnlyDTO);
     }
 
