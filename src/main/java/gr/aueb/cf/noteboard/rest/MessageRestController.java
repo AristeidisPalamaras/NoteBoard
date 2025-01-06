@@ -23,9 +23,6 @@ public class MessageRestController {
     private final IMessageService messageService;
 
     //get messages
-    //todo Choose one of these two implementation options:
-    //Ideally, I would want to find users (members) by username like, and then find messages by group AND by user (author)
-    //Alternatively, I could directly find messages by group AND username like (author). This is not optimal but might be easier to implement.
     @GetMapping("/messages")
     public ResponseEntity<Page<MessageReadOnlyDTO>> getMessages(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -40,24 +37,19 @@ public class MessageRestController {
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-
+    //The above implementation assumes that the author has already been retrieved by a getUserByUsernameLike(),
+    //so the messages can be retrieved by messageId AND userId
+    //The alternative implementation below gets messages by groupId AND username like
 //    @GetMapping("/messages")
 //    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessages(
 //            @RequestParam(value = "page", defaultValue = "0") int page,
 //            @RequestParam("groupId") Long groupId,
-//            //use this to find messages by author id
-//            @RequestParam(value = "authorId", required = false) Long authorId,
-//            // use this to find messages by author username like
-////            @RequestParam(required = false) String author,
+//            @RequestParam(required = false) String author,
 //            @RequestParam(value = "sortDirection", required = false) String sortDirection)
 //            throws AppObjectNotFoundException {
 //
-//        //use this to find messages by author id
-//        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorId(
-//                page, groupId, authorId, sortDirection);
-//        //use this to find messages by author username like
-////        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByAuthorUsernameLike(
-////                page, groupId, author, sortDirection);
+//        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
+//                page, groupId, author, sortDirection);
 //
 //        return new ResponseEntity<>(messages, HttpStatus.OK);
 //    }

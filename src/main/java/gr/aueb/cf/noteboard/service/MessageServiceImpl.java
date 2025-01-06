@@ -63,6 +63,31 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
+    public void deleteMessage(Long id) throws AppObjectNotFoundException {
+
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + id + " not found"));
+
+        User author = message.getAuthor();
+        if (author != null) {
+            author.removeAuthoredMessage(message);
+        }
+
+        Group group = message.getGroup();
+        if (group != null) {
+            group.removeMessage(message);
+        }
+
+        Set<Reaction> reactions = message.getReactions();
+        if (reactions != null) {
+            reactions.forEach(reaction -> {
+                reactionRepository.delete(reaction);
+            });
+        }
+        messageRepository.delete(message);
+    }
+
+    @Transactional
     public MessageReadOnlyDTO getMessageById(Long id) throws AppObjectNotFoundException {
 
         MessageReadOnlyDTO messageReadOnlyDTO = messageRepository.findMessageById(id)
@@ -103,31 +128,6 @@ public class MessageServiceImpl implements IMessageService {
 
         return messageRepository.findMessagesByGroupIdAndAuthorUsernameLike(groupId, username, pageable)
                 .map(messageMapper::mapToMessageReadOnlyDTO);
-    }
-
-    @Transactional
-    public void deleteMessage(Long id) throws AppObjectNotFoundException {
-
-        Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + id + " not found"));
-
-        User author = message.getAuthor();
-        if (author != null) {
-            author.removeAuthoredMessage(message);
-        }
-
-        Group group = message.getGroup();
-        if (group != null) {
-            group.removeMessage(message);
-        }
-
-        Set<Reaction> reactions = message.getReactions();
-        if (reactions != null) {
-            reactions.forEach(reaction -> {
-                reactionRepository.delete(reaction);
-            });
-        }
-        messageRepository.delete(message);
     }
 
     private Pageable getPageable(int page, String sortDirection) {

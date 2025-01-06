@@ -60,51 +60,32 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public List<UserReadOnlyDTO> getUsersByUsernameLike(String username) {
 
-        List<UserReadOnlyDTO> users;
+        if (username == null || username.isBlank()) {
+            return userRepository.findAll()
+                    .stream()
+                    .map(userMapper::mapToUserReadOnlyDTO)
+                    .collect(Collectors.toList());
+        }
 
-        users = userRepository.findUsersByUsernameLike(username.trim())
+        return userRepository.findUsersByUsernameLike(username.trim())
                 .stream()
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .collect(Collectors.toList());
-
-        return users;
-    }
-
-    @Transactional
-    public List<UserReadOnlyDTO> getAllUsers() {
-
-        List<UserReadOnlyDTO> users;
-        users = userRepository.findAll()
-                .stream()
-                .map(userMapper::mapToUserReadOnlyDTO)
-                .collect(Collectors.toList());
-
-        return users;
-    }
-
-    @Transactional
-    public List<UserReadOnlyDTO> getUsersByGroupId(Long groupId) {
-
-        List<UserReadOnlyDTO> users;
-
-        users = userRepository.findUsersByGroupId(groupId)
-                .stream()
-                .map(userMapper::mapToUserReadOnlyDTO)
-                .collect(Collectors.toList());
-
-        return users;
     }
 
     @Transactional
     public List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username) {
 
-        List<UserReadOnlyDTO> users;
+        if (username == null || username.isBlank()) {
+            return userRepository.findUsersByGroupId(groupId)
+                    .stream()
+                    .map(userMapper::mapToUserReadOnlyDTO)
+                    .collect(Collectors.toList());
+        }
 
-        users = userRepository.findUsersByGroupIdAndUsernameLike(groupId, username.trim())
+        return userRepository.findUsersByGroupIdAndUsernameLike(groupId, username.trim())
                 .stream()
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .collect(Collectors.toList());
-
-        return users;
     }
 }

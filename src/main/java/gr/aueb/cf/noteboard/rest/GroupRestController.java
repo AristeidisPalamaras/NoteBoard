@@ -27,14 +27,9 @@ public class GroupRestController {
 
     private final IGroupService groupService;
 
-    //get groups
-    //TODO choose one of these two implementations:
-    //either implement a single end-point that finds both the list of owned groups and the list of joined groups, and packages them inside a Map
-    //or implement two end-points, one to find the list of owned groups and one to find the list of joined groups
-
-    //get groups by user (single end-point implementation)
-    @GetMapping("/groups")
-    public ResponseEntity<Map<String, Object>> getGroups(@RequestParam("userId") Long userId) {
+    //get (owned and joined) groups by user
+    @GetMapping("/groups/{userId}")
+    public ResponseEntity<Map<String, Object>> getGroups(@PathVariable("userId") Long userId) {
 
         Map<String, Object> groups = new HashMap<>();
 
@@ -47,21 +42,23 @@ public class GroupRestController {
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
-    //get groups by owner (double end-point implementation)
-    @GetMapping("/ownedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroups(@RequestParam("ownerId") Long ownerId) {
+    //Alternative implementation where owned groups and joined groups are retrieved from different endpoints
 
-        List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(ownerId);
-        return new ResponseEntity<>(ownedGroups, HttpStatus.OK);
-    }
+    //get groups by owner
+//    @GetMapping("/groups/owner/{ownerId}")
+//    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroups(@PathVariable("ownerId") Long ownerId) {
+//
+//        List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(ownerId);
+//        return new ResponseEntity<>(ownedGroups, HttpStatus.OK);
+//    }
 
-    //get groups by member (double end-point implementation)
-    @GetMapping("/joinedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroups(@RequestParam("memberId") Long memberId) {
-
-            List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(memberId);
-            return new ResponseEntity<>(joinedGroups, HttpStatus.OK);
-    }
+    //get groups by member
+//    @GetMapping("/groups/member/{memberId}")
+//    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroups(@PathVariable("memberId") Long memberId) {
+//
+//            List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(memberId);
+//            return new ResponseEntity<>(joinedGroups, HttpStatus.OK);
+//    }
 
     //get group
     @GetMapping("/groups/{groupId}")

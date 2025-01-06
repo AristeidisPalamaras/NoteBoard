@@ -13,8 +13,6 @@ public interface IUserService {
     UserReadOnlyDTO insertUser(UserInsertDTO userInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException;
     UserReadOnlyDTO getUserById(Long id) throws AppObjectNotFoundException;
     UserReadOnlyDTO getUserByUsername(String username) throws AppObjectNotFoundException;
-    List<UserReadOnlyDTO> getAllUsers();
     List<UserReadOnlyDTO> getUsersByUsernameLike(String username);
-    List<UserReadOnlyDTO> getUsersByGroupId(Long groupId);
     List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username);
 }
