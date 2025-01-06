@@ -11,11 +11,13 @@ import java.util.Set;
 
 public interface GroupRepository extends JpaRepository<Group, Long>,
         JpaSpecificationExecutor<Group> {
-    Optional<Group> findByName(String name);
+
+    Optional<Group> findGroupById(Long id);
+    Optional<Group> findGroupByName(String name);
 
     @Query("SELECT g FROM Group g JOIN g.owner u WHERE u.id = :ownerId")
-    Set<Group> findGroupsByOwner(@Param("ownerId") Long ownerId);
+    Set<Group> findGroupsByOwnerId(@Param("ownerId") Long ownerId);
 
     @Query("SELECT g FROM Group g JOIN g.members u WHERE u.id = :memberId")
-    Set<Group> findGroupsByMember(@Param("memberId") Long memberId);
+    Set<Group> findGroupsByMemberId(@Param("memberId") Long memberId);
 }

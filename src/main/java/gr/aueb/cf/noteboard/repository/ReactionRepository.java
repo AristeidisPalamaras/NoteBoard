@@ -12,5 +12,5 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long>,
         JpaSpecificationExecutor<Reaction> {
 
     @Query("SELECT r FROM Reaction r JOIN r.message m WHERE m.id = :messageId")
-    Set<Reaction> findReactionsByMessage(@Param("messageId") Long messageId);
+    Set<Reaction> findReactionsByMessageId(@Param("messageId") Long messageId);
 }

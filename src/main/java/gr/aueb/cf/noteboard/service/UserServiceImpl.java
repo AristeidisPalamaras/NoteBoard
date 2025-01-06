@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackOn = Exception.class)
     public UserReadOnlyDTO insertUser(UserInsertDTO userInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException {
 
-        if (userRepository.findByUsername(userInsertDTO.getUsername()).isPresent()) {
+        if (userRepository.findUserByUsername(userInsertDTO.getUsername()).isPresent()) {
             throw new AppObjectAlreadyExists("User", "User with username " + userInsertDTO.getUsername() + " already exists");
         }
 
@@ -41,7 +40,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public UserReadOnlyDTO getUserById(Long id) throws AppObjectNotFoundException {
 
-        UserReadOnlyDTO userReadOnlyDTO = userRepository.findById(id)
+        UserReadOnlyDTO userReadOnlyDTO = userRepository.findUserById(id)
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + id + " not found"));
 
@@ -51,11 +50,24 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public UserReadOnlyDTO getUserByUsername(String username) throws AppObjectNotFoundException {
 
-        UserReadOnlyDTO userReadOnlyDTO = userRepository.findByUsername(username)
+        UserReadOnlyDTO userReadOnlyDTO = userRepository.findUserByUsername(username)
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with username " + username + " not found"));
 
         return userReadOnlyDTO;
+    }
+
+    @Transactional
+    public List<UserReadOnlyDTO> getUsersByUsernameLike(String username) {
+
+        List<UserReadOnlyDTO> users;
+
+        users = userRepository.findUsersByUsernameLike(username.trim())
+                .stream()
+                .map(userMapper::mapToUserReadOnlyDTO)
+                .collect(Collectors.toList());
+
+        return users;
     }
 
     @Transactional
@@ -71,11 +83,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Transactional
-    public List<UserReadOnlyDTO> getUsersByGroup(Long groupId) {
+    public List<UserReadOnlyDTO> getUsersByGroupId(Long groupId) {
 
         List<UserReadOnlyDTO> users;
 
-        users = userRepository.findUsersByGroup(groupId)
+        users = userRepository.findUsersByGroupId(groupId)
                 .stream()
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .collect(Collectors.toList());

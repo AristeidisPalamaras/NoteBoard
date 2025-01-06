@@ -11,5 +11,5 @@ import java.util.List;
 public interface IReactionService {
 
     ReactionReadOnlyDTO insertReaction(ReactionInsertDTO reactionInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException;
-    List<ReactionReadOnlyDTO> getReactionsByMessage(Long messageId);
+    List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId);
 }

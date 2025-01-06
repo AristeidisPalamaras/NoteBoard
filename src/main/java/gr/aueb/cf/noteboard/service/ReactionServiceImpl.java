@@ -45,7 +45,7 @@ public class ReactionServiceImpl implements IReactionService {
         reaction.setMessage(message);
         message.addReaction(reaction);
 
-        User user = userRepository.findByUsername(reactionInsertDTO.getUser())
+        User user = userRepository.findUserByUsername(reactionInsertDTO.getUser())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with username " + reactionInsertDTO.getUser() + " not found"));
 
         reaction.setUser(user);
@@ -57,11 +57,11 @@ public class ReactionServiceImpl implements IReactionService {
     }
 
     @Transactional
-    public List<ReactionReadOnlyDTO> getReactionsByMessage(Long messageId) {
+    public List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId) {
 
         List<ReactionReadOnlyDTO> reactions;
 
-        reactions = reactionRepository.findReactionsByMessage(messageId)
+        reactions = reactionRepository.findReactionsByMessageId(messageId)
                 .stream()
                 .map(reactionMapper::mapToReactionReadOnlyDTO)
                 .collect(Collectors.toList());

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +45,13 @@ public class MessageServiceImpl implements IMessageService {
         Message message = new Message();
         message.setText(messageInsertDTO.getText());
 
-        User author = userRepository.findByUsername(messageInsertDTO.getAuthor())
+        User author = userRepository.findUserByUsername(messageInsertDTO.getAuthor())
                 .orElseThrow(() -> new AppObjectNotFoundException("User",
                         "User with username " + messageInsertDTO.getAuthor() + " not found"));
         message.setAuthor(author);
         author.addAuthoredMessage(message);
 
-        Group group = groupRepository.findByName(messageInsertDTO.getGroup())
+        Group group = groupRepository.findGroupByName(messageInsertDTO.getGroup())
                 .orElseThrow(() -> new AppObjectNotFoundException("Group",
                         "Group with name " + messageInsertDTO.getGroup() + " not found"));
 
@@ -64,7 +65,7 @@ public class MessageServiceImpl implements IMessageService {
     @Transactional
     public MessageReadOnlyDTO getMessageById(Long id) throws AppObjectNotFoundException {
 
-        MessageReadOnlyDTO messageReadOnlyDTO = messageRepository.findById(id)
+        MessageReadOnlyDTO messageReadOnlyDTO = messageRepository.findMessageById(id)
                 .map(messageMapper::mapToMessageReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + id + " not found"));
 
@@ -72,20 +73,35 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
-    public Page<MessageReadOnlyDTO> getMessages(int page, Long groupId, String sortDirection, Long authorId) {
+    public Page<MessageReadOnlyDTO> getMessagesByAuthorId(int page, Long groupId, String sortDirection, Long authorId)
+            throws AppObjectNotFoundException {
 
-        MessagePageable messagePageable = new MessagePageable();
-        messagePageable.setPage(page);
+        Pageable pageable = getPageable(page, sortDirection);
 
-        if (sortDirection != null && !sortDirection.isBlank()) {
-            messagePageable.setSortDirection(Sort.Direction.fromString(sortDirection));
+        if ( authorId == null ) {
+            return messageRepository.findMessagesByGroupId(groupId, pageable)
+                .map(messageMapper::mapToMessageReadOnlyDTO);
         }
 
-        if ( authorId != null ) {
-            return messageRepository.findMessagesByGroupAndAuthor(groupId, authorId, messagePageable.getPageable())
+        if (userRepository.findUserById(authorId) == null) {
+            throw new AppObjectNotFoundException("Author", "Author with id " + authorId + " not found");
+        }
+
+        return messageRepository.findMessagesByGroupIdAndAuthorId(groupId, authorId, pageable)
+                    .map(messageMapper::mapToMessageReadOnlyDTO);
+    }
+
+    @Transactional
+    public Page<MessageReadOnlyDTO> getMessagesByAuthorUsernameLike(int page, Long groupId, String sortDirection, String username) {
+
+        Pageable pageable = getPageable(page, sortDirection);
+
+        if ( username == null || username.isBlank() ) {
+            return messageRepository.findMessagesByGroupId(groupId, pageable)
                     .map(messageMapper::mapToMessageReadOnlyDTO);
         }
-        return messageRepository.findMessagesByGroup(groupId, messagePageable.getPageable())
+
+        return messageRepository.findMessagesByGroupIdAndAuthorUsernameLike(groupId, username, pageable)
                 .map(messageMapper::mapToMessageReadOnlyDTO);
     }
 
@@ -112,5 +128,14 @@ public class MessageServiceImpl implements IMessageService {
             });
         }
         messageRepository.delete(message);
+    }
+
+    private Pageable getPageable(int page, String sortDirection) {
+        MessagePageable messagePageable = new MessagePageable();
+        messagePageable.setPage(page);
+        if (sortDirection != null && !sortDirection.isBlank()) {
+            messagePageable.setSortDirection(Sort.Direction.fromString(sortDirection));
+        }
+        return messagePageable.getPageable();
     }
 }

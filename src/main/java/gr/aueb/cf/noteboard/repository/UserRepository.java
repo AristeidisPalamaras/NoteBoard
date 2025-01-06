@@ -12,8 +12,12 @@ import java.util.Set;
 public interface UserRepository extends JpaRepository<User, Long>,
         JpaSpecificationExecutor<User> {
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findUserById(Long id);
+    Optional<User> findUserByUsername(String username);
+
+    @Query("SELECT u FROM User u WHERE u.username LIKE CONCAT('%', :username, '%')")
+    Set<User> findUsersByUsernameLike(@Param("username") String username);
 
     @Query("SELECT u FROM User u JOIN u.joinedGroups g WHERE g.id = :groupId")
-    Set<User> findUsersByGroup(@Param("groupId")Long groupId);
+    Set<User> findUsersByGroupId(@Param("groupId")Long groupId);
 }

@@ -7,7 +7,6 @@ import gr.aueb.cf.noteboard.dto.GroupInsertDTO;
 import gr.aueb.cf.noteboard.dto.GroupReadOnlyDTO;
 import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
 import gr.aueb.cf.noteboard.mapper.GroupMapper;
-import gr.aueb.cf.noteboard.mapper.UserMapper;
 import gr.aueb.cf.noteboard.model.Group;
 import gr.aueb.cf.noteboard.model.Message;
 import gr.aueb.cf.noteboard.model.User;
@@ -40,14 +39,14 @@ public class GroupServiceImpl implements IGroupService {
 
         Group group = new Group();
         group.setName(groupInsertDTO.getName());
-        User owner = userRepository.findByUsername(groupInsertDTO.getOwner())
+        User owner = userRepository.findUserByUsername(groupInsertDTO.getOwner())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + groupInsertDTO.getOwner() + " not found"));
 
         group.setOwner(owner);
         owner.addOwnedGroup(group);
 
         for (String username : groupInsertDTO.getMembers()) {
-            User member = userRepository.findByUsername(username)
+            User member = userRepository.findUserByUsername(username)
                     .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
             group.addMember(member);
         }
@@ -60,7 +59,7 @@ public class GroupServiceImpl implements IGroupService {
     @Transactional
     public GroupReadOnlyDTO getGroupById(Long id) throws AppObjectNotFoundException {
 
-        GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findById(id)
+        GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findGroupById(id)
                 .map(groupMapper::mapToGroupReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + id + " not found"));
 
@@ -70,7 +69,7 @@ public class GroupServiceImpl implements IGroupService {
     @Transactional
     public GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException {
 
-        GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findByName(name)
+        GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findGroupByName(name)
                 .map(groupMapper::mapToGroupReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with name " + name + " not found"));
 
@@ -78,11 +77,11 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Transactional
-    public List<GroupReadOnlyDTO> getGroupsByOwner(Long ownerId) {
+    public List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId) {
 
         List<GroupReadOnlyDTO> groups;
 
-        groups = groupRepository.findGroupsByOwner(ownerId)
+        groups = groupRepository.findGroupsByOwnerId(ownerId)
                 .stream()
                 .map(groupMapper::mapToGroupReadOnlyDTO)
                 .collect(Collectors.toList());
@@ -91,11 +90,11 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Transactional
-    public List<GroupReadOnlyDTO> getGroupsByMember(Long memberId) {
+    public List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId) {
 
         List<GroupReadOnlyDTO> groups;
 
-        groups = groupRepository.findGroupsByMember(memberId)
+        groups = groupRepository.findGroupsByMemberId(memberId)
                 .stream()
                 .map(groupMapper::mapToGroupReadOnlyDTO)
                 .collect(Collectors.toList());
@@ -137,7 +136,7 @@ public class GroupServiceImpl implements IGroupService {
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupUpdateDTO.getId() + " not found"));
 
         for (String username : groupUpdateDTO.getMembers()) {
-            User member = userRepository.findByUsername(username)
+            User member = userRepository.findUserByUsername(username)
                     .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
             if (!group.getMembers().contains(member)) {
                 group.addMember(member);
