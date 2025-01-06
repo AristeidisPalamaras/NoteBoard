@@ -36,6 +36,13 @@ public class ReactionServiceImpl implements IReactionService {
     public ReactionReadOnlyDTO insertReaction(ReactionInsertDTO reactionInsertDTO)
             throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException {
 
+        if (reactionRepository.findReactionByMessageIdAndUserIdAndDescription(
+                reactionInsertDTO.getMessageId(),
+                reactionInsertDTO.getUser(),
+                reactionInsertDTO.getDescription()).isPresent()) {
+            throw new AppObjectAlreadyExists("Reaction", "Reaction already exists");
+        }
+
         Reaction reaction = new Reaction();
         reaction.setDescription(reactionInsertDTO.getDescription());
 

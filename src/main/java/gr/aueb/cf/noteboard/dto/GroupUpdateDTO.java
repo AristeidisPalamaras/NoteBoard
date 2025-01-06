@@ -17,8 +17,6 @@ public class GroupUpdateDTO {
     @NotNull(message = "Id is required")
     private Long id;
 
-    @NotNull(message = "Name is required")
-    private String name;
-
-    private Set<String> members;
+    private Set<String> removeMembers;
+    private Set<String> addMembers;
 }

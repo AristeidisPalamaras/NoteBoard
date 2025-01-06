@@ -13,6 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long>,
         JpaSpecificationExecutor<User> {
 
     Optional<User> findUserById(Long id);
+
     Optional<User> findUserByUsername(String username);
 
     @Query("SELECT u FROM User u WHERE u.username LIKE CONCAT('%', :username, '%')")
@@ -20,4 +21,10 @@ public interface UserRepository extends JpaRepository<User, Long>,
 
     @Query("SELECT u FROM User u JOIN u.joinedGroups g WHERE g.id = :groupId")
     Set<User> findUsersByGroupId(@Param("groupId")Long groupId);
+
+    @Query("SELECT u FROM User u JOIN u.joinedGroups g WHERE g.id = :groupId AND u.username = :username")
+    Optional<User> findUserByGroupIdAndUsername(@Param("groupId")Long groupId, @Param("username") String username);
+
+    @Query("SELECT u FROM User u JOIN u.joinedGroups g WHERE g.id = :groupId AND u.username LIKE CONCAT('%', :username, '%')")
+    Set<User> findUsersByGroupIdAndUsernameLike(@Param("groupId")Long groupId, @Param("username") String username);
 }

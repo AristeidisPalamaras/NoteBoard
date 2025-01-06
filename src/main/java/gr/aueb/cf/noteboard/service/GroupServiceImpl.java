@@ -38,9 +38,13 @@ public class GroupServiceImpl implements IGroupService {
             throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException {
 
         Group group = new Group();
-        group.setName(groupInsertDTO.getName());
+
         User owner = userRepository.findUserByUsername(groupInsertDTO.getOwner())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + groupInsertDTO.getOwner() + " not found"));
+
+        if (owner.getOwnedGroups().stream().map(Group::getName).collect(Collectors.toSet()).contains(group.getName())) {
+            throw new AppObjectAlreadyExists("Group", "Group with name " + groupInsertDTO.getName() + " already exists");
+        }
 
         group.setOwner(owner);
         owner.addOwnedGroup(group);
@@ -48,12 +52,79 @@ public class GroupServiceImpl implements IGroupService {
         for (String username : groupInsertDTO.getMembers()) {
             User member = userRepository.findUserByUsername(username)
                     .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
+
+            if (member.getId().equals(owner.getId())) {
+                throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+            }
+
+            group.addMember(member);
+        }
+
+        group.setName(groupInsertDTO.getName());
+
+        group = groupRepository.save(group);
+
+        return groupMapper.mapToGroupReadOnlyDTO(group);
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public GroupReadOnlyDTO updateGroup(GroupUpdateDTO groupUpdateDTO)
+            throws AppObjectNotFoundException, AppObjectInvalidArgumentException {
+
+        Group group = groupRepository.findGroupById(groupUpdateDTO.getId())
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupUpdateDTO.getId() + " not found"));
+
+        for (String username : groupUpdateDTO.getRemoveMembers()) {
+            User member = userRepository.findUserByGroupIdAndUsername(groupUpdateDTO.getId(), username)
+                    .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
+
+            group.removeMember(member);
+        }
+
+        for (String username : groupUpdateDTO.getAddMembers()) {
+            User member = userRepository.findUserByUsername(username)
+                    .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
+
+            if (member.getId().equals(group.getOwner().getId())) {
+                throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+            }
+
+            if (group.getMembers().contains(member)) {
+                throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is already in the group");
+            }
+
             group.addMember(member);
         }
 
         group = groupRepository.save(group);
 
         return groupMapper.mapToGroupReadOnlyDTO(group);
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteGroup(Long id) throws AppObjectNotFoundException {
+
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + id + " not found"));
+
+        User owner = group.getOwner();
+        if (owner != null) {
+            owner.removeOwnedGroup(group);
+        }
+
+        Set<User> members = group.getMembers();
+        if (members != null) {
+            members.forEach(member -> member.removeJoinedGroup(group));
+        }
+
+        Set<Message> messages = group.getMessages();
+        if (messages != null) {
+            messages.forEach(message -> {
+                messageRepository.delete(message);
+            });
+        }
+
+        groupRepository.delete(group);
     }
 
     @Transactional
@@ -100,53 +171,5 @@ public class GroupServiceImpl implements IGroupService {
                 .collect(Collectors.toList());
 
         return groups;
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public void deleteGroup(Long id) throws AppObjectNotFoundException {
-
-        Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + id + " not found"));
-
-        User owner = group.getOwner();
-        if (owner != null) {
-                owner.removeOwnedGroup(group);
-        }
-
-        Set<User> members = group.getMembers();
-        if (members != null) {
-            members.forEach(member -> member.removeJoinedGroup(group));
-        }
-
-        Set<Message> messages = group.getMessages();
-        if (messages != null) {
-            messages.forEach(message -> {
-                messageRepository.delete(message);
-            });
-        }
-
-        groupRepository.delete(group);
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public GroupReadOnlyDTO updateGroup(GroupUpdateDTO groupUpdateDTO)
-            throws AppObjectNotFoundException, AppObjectInvalidArgumentException {
-
-        Group group = groupRepository.findById(groupUpdateDTO.getId())
-                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupUpdateDTO.getId() + " not found"));
-
-        for (String username : groupUpdateDTO.getMembers()) {
-            User member = userRepository.findUserByUsername(username)
-                    .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
-            if (!group.getMembers().contains(member)) {
-                group.addMember(member);
-            } else {
-                group.removeMember(member);
-            }
-        }
-
-        group = groupRepository.save(group);
-
-        return groupMapper.mapToGroupReadOnlyDTO(group);
     }
 }

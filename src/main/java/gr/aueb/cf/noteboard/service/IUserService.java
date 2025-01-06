@@ -16,4 +16,5 @@ public interface IUserService {
     List<UserReadOnlyDTO> getAllUsers();
     List<UserReadOnlyDTO> getUsersByUsernameLike(String username);
     List<UserReadOnlyDTO> getUsersByGroupId(Long groupId);
+    List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username);
 }

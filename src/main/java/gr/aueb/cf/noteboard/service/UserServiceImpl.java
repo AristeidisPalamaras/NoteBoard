@@ -94,4 +94,17 @@ public class UserServiceImpl implements IUserService {
 
         return users;
     }
+
+    @Transactional
+    public List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username) {
+
+        List<UserReadOnlyDTO> users;
+
+        users = userRepository.findUsersByGroupIdAndUsernameLike(groupId, username.trim())
+                .stream()
+                .map(userMapper::mapToUserReadOnlyDTO)
+                .collect(Collectors.toList());
+
+        return users;
+    }
 }

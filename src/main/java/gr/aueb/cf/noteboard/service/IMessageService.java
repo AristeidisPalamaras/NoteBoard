@@ -10,8 +10,8 @@ import org.springframework.data.domain.Page;
 public interface IMessageService {
 
     MessageReadOnlyDTO insertMessage(MessageInsertDTO messageInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException;
+    void deleteMessage(Long id) throws AppObjectNotFoundException;
     MessageReadOnlyDTO getMessageById(Long id) throws AppObjectNotFoundException;
     Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorId(int page, Long groupId, Long authorId, String sortDirection) throws AppObjectNotFoundException;
     Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorUsernameLike(int page, Long groupId, String username, String sortDirection);
-    void deleteMessage(Long id) throws AppObjectNotFoundException;
 }
