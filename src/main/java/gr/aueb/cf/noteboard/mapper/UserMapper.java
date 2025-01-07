@@ -11,10 +11,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserMapper {
 
-    private final GroupMapper groupMapper;
-    private final MessageMapper messageMapper;
-    private final ReactionMapper reactionMapper;
-
 //    private final PasswordEncoder passwordEncoder;
 
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {

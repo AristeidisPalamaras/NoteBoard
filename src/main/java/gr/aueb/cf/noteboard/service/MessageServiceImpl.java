@@ -49,14 +49,14 @@ public class MessageServiceImpl implements IMessageService {
                 .orElseThrow(() -> new AppObjectNotFoundException("User",
                         "User with username " + messageInsertDTO.getAuthor() + " not found"));
         message.setAuthor(author);
-        author.addAuthoredMessage(message);
+        // author.addAuthoredMessage(message);
 
-        Group group = groupRepository.findGroupByName(messageInsertDTO.getGroup())
+        Group group = groupRepository.findGroupById(messageInsertDTO.getGroupId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Group",
-                        "Group with name " + messageInsertDTO.getGroup() + " not found"));
+                        "Group with name " + messageInsertDTO.getGroupId() + " not found"));
 
         message.setGroup(group);
-        group.addMessage(message);
+        // group.addMessage(message);
 
         message = messageRepository.save(message);
         return messageMapper.mapToMessageReadOnlyDTO(message);

@@ -56,19 +56,19 @@ public class MessageRestController {
     //The alternative implementation bellow gets messages by groupId AND filtering by username.
 
     //get messages by group - filter by username
-    @GetMapping("/groups/{groupId}/messages")
-    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroupFiltered(
-            @PathVariable("groupId") Long groupId,
-            @RequestParam(required = false) String author,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection)
-            throws AppObjectNotFoundException {
-
-        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
-                page, groupId, author, sortDirection);
-
-        return new ResponseEntity<>(messages, HttpStatus.OK);
-    }
+//    @GetMapping("/groups/{groupId}/messages")
+//    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroupFiltered(
+//            @PathVariable("groupId") Long groupId,
+//            @RequestParam(required = false) String author,
+//            @RequestParam(value = "page", defaultValue = "0") int page,
+//            @RequestParam(value = "sortDirection", required = false) String sortDirection)
+//            throws AppObjectNotFoundException {
+//
+//        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
+//                page, groupId, author, sortDirection);
+//
+//        return new ResponseEntity<>(messages, HttpStatus.OK);
+//    }
 
     //get message
     @GetMapping("/messages/{messageId}")
@@ -80,7 +80,7 @@ public class MessageRestController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    //todo DOUBLE-CHECK post message
+    //post message
     @PostMapping("/messages/save")
     public ResponseEntity<MessageReadOnlyDTO> saveMessage(
             @Valid @RequestBody MessageInsertDTO messageInsertDTO,

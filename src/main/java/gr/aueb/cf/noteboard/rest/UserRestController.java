@@ -53,7 +53,7 @@ public class UserRestController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    //todo DOUBLE-CHECK post user
+    //post user
     @PostMapping("/users/save")
     public ResponseEntity<UserReadOnlyDTO> saveUser(
             @Valid @RequestBody UserInsertDTO userInsertDTO,
@@ -66,5 +66,10 @@ public class UserRestController {
 
         UserReadOnlyDTO user = userService.insertUser(userInsertDTO);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/hello")
+    public ResponseEntity<String> hello() {
+        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
 }

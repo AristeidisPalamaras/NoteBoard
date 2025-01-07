@@ -38,6 +38,7 @@ public class GroupServiceImpl implements IGroupService {
             throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException {
 
         Group group = new Group();
+        group.setName(groupInsertDTO.getName());
 
         User owner = userRepository.findUserByUsername(groupInsertDTO.getOwner())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + groupInsertDTO.getOwner() + " not found"));
@@ -60,8 +61,6 @@ public class GroupServiceImpl implements IGroupService {
             group.addMember(member);
         }
 
-        group.setName(groupInsertDTO.getName());
-
         group = groupRepository.save(group);
 
         return groupMapper.mapToGroupReadOnlyDTO(group);
@@ -74,26 +73,30 @@ public class GroupServiceImpl implements IGroupService {
         Group group = groupRepository.findGroupById(groupUpdateDTO.getId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupUpdateDTO.getId() + " not found"));
 
-        for (String username : groupUpdateDTO.getRemoveMembers()) {
-            User member = userRepository.findUserByGroupIdAndUsername(groupUpdateDTO.getId(), username)
-                    .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
+        if (groupUpdateDTO.getRemoveMembers() != null) {
+            for (String username : groupUpdateDTO.getRemoveMembers()) {
+                User member = userRepository.findUserByGroupIdAndUsername(groupUpdateDTO.getId(), username)
+                        .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
-            group.removeMember(member);
+                group.removeMember(member);
+            }
         }
 
-        for (String username : groupUpdateDTO.getAddMembers()) {
-            User member = userRepository.findUserByUsername(username)
-                    .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
+        if (groupUpdateDTO.getAddMembers() != null) {
+            for (String username : groupUpdateDTO.getAddMembers()) {
+                User member = userRepository.findUserByUsername(username)
+                        .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
-            if (member.getId().equals(group.getOwner().getId())) {
-                throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+                if (member.getId().equals(group.getOwner().getId())) {
+                    throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+                }
+
+                if (group.getMembers().contains(member)) {
+                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is already in the group");
+                }
+
+                group.addMember(member);
             }
-
-            if (group.getMembers().contains(member)) {
-                throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is already in the group");
-            }
-
-            group.addMember(member);
         }
 
         group = groupRepository.save(group);
@@ -133,16 +136,6 @@ public class GroupServiceImpl implements IGroupService {
         GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findGroupById(id)
                 .map(groupMapper::mapToGroupReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + id + " not found"));
-
-        return groupReadOnlyDTO;
-    }
-
-    @Transactional
-    public GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException {
-
-        GroupReadOnlyDTO groupReadOnlyDTO = groupRepository.findGroupByName(name)
-                .map(groupMapper::mapToGroupReadOnlyDTO)
-                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with name " + name + " not found"));
 
         return groupReadOnlyDTO;
     }

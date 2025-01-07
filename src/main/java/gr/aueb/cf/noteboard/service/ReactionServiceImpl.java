@@ -50,13 +50,13 @@ public class ReactionServiceImpl implements IReactionService {
                 .orElseThrow(() -> new AppObjectNotFoundException("Message", "Mesage with id " + reactionInsertDTO.getMessageId() + " not found"));
 
         reaction.setMessage(message);
-        message.addReaction(reaction);
+        // message.addReaction(reaction);
 
         User user = userRepository.findUserByUsername(reactionInsertDTO.getUser())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with username " + reactionInsertDTO.getUser() + " not found"));
 
         reaction.setUser(user);
-        user.addReaction(reaction);
+        // user.addReaction(reaction);
 
         reaction = reactionRepository.save(reaction);
 

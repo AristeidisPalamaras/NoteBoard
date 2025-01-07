@@ -70,7 +70,7 @@ public class GroupRestController {
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
 
-    //todo DOUBLE-CHECK post group
+    //post group
     @PostMapping("/groups/save")
     public ResponseEntity<GroupReadOnlyDTO> saveGroup(
             @Valid @RequestBody GroupInsertDTO groupInsertDTO,
@@ -85,7 +85,7 @@ public class GroupRestController {
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
-    //todo DOUBLE-CHECK put group
+    //put group
     @PutMapping("/groups/{groupId}")
     public ResponseEntity<GroupReadOnlyDTO> updateGroup(
             @PathVariable("groupId") Long groupId,

@@ -1,8 +1,6 @@
 package gr.aueb.cf.noteboard.mapper;
 
-import gr.aueb.cf.noteboard.dto.GroupInsertDTO;
 import gr.aueb.cf.noteboard.dto.GroupReadOnlyDTO;
-import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
 import gr.aueb.cf.noteboard.model.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,9 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GroupMapper {
-
-    private final UserMapper userMapper;
-    private final MessageMapper messageMapper;
 
     public GroupReadOnlyDTO mapToGroupReadOnlyDTO(Group group) {
 

@@ -15,7 +15,7 @@ public interface IGroupService {
     GroupReadOnlyDTO updateGroup(GroupUpdateDTO groupUpdateDTO) throws AppObjectNotFoundException, AppObjectInvalidArgumentException;
     void deleteGroup(Long id) throws AppObjectNotFoundException;
     GroupReadOnlyDTO getGroupById(Long id) throws AppObjectNotFoundException;
-    GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException;
+    // GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException;
     List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId);
     List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId);
 

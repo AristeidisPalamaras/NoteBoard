@@ -18,7 +18,7 @@ public class MessageInsertDTO {
     private String author;
 
     @NotNull(message = "Group is required")
-    private String group;
+    private Long groupId;
 
     @NotEmpty(message = "Message can not be empty")
     @Size(max = 480, message = "Message must be less than 480 characters")
