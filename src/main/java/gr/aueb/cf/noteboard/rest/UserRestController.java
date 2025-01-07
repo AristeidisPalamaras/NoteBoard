@@ -24,7 +24,7 @@ public class UserRestController {
 
     private final IUserService userService;
 
-    //get all users + search by username
+    //get users - filter by username
     @GetMapping("/users")
     public ResponseEntity<List<UserReadOnlyDTO>> getUsersFiltered(
             @RequestParam(value = "username", required = false) String username) {
@@ -33,11 +33,11 @@ public class UserRestController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    //get users by group + search by username
-    @GetMapping("/groups/users")
+    //get users by group - filter by username
+    @GetMapping("/groups/{groupId}/users")
     public ResponseEntity<List<UserReadOnlyDTO>> getUsersByGroupFiltered(
-            @RequestParam(value = "username", required = false) String username,
-            @RequestParam(value = "groupId", required = false) Long groupId) {
+            @PathVariable(value = "groupId") Long groupId,
+            @RequestParam(value = "username", required = false) String username) {
 
         List<UserReadOnlyDTO> users = userService.getUsersByGroupIdAndUsernameLike(groupId, username);
         return new ResponseEntity<>(users, HttpStatus.OK);

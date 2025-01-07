@@ -24,7 +24,7 @@ public class ReactionRestController {
     private final IReactionService reactionService;
 
     //get reactions by message
-    @GetMapping("/reactions/per-message/{messageId}")
+    @GetMapping("messages/{messageId}/reactions")
     public ResponseEntity<List<ReactionReadOnlyDTO>> getReactionsByMessage(@PathVariable("messageId") Long messageId) {
 
         List<ReactionReadOnlyDTO> reactions = reactionService.getReactionsByMessageId(messageId);
@@ -32,8 +32,8 @@ public class ReactionRestController {
         return new ResponseEntity<>(reactions, HttpStatus.OK);
     }
 
-    //get reactions by message AND user
-    @GetMapping("/reactions/per-message{messageId}/per-user/{userId}")
+    //get reactions by message and user
+    @GetMapping("/messages/{messageId}/users/{userId}/reactions")
     public ResponseEntity<List<ReactionReadOnlyDTO>> getReactionsByMessageAndUser(
             @PathVariable("messageId") Long messageId,
             @PathVariable("userId") Long userId) {

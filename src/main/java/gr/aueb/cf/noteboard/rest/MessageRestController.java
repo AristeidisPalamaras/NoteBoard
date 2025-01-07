@@ -22,40 +22,55 @@ public class MessageRestController {
 
     private final IMessageService messageService;
 
-    //get messages
-    @GetMapping("/messages")
-    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessages(
+    //get messages by group
+    @GetMapping("/groups/{groupId}/messages")
+    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroup(
+            @PathVariable("groupId") Long groupId,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam("groupId") Long groupId,
-            @RequestParam(value = "authorId", required = false) Long authorId,
             @RequestParam(value = "sortDirection", required = false) String sortDirection)
             throws AppObjectNotFoundException {
 
-        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorId(
-                page, groupId, authorId, sortDirection);
+        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupId(
+                page, groupId, sortDirection);
 
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    //The above implementation assumes that the author has already been retrieved by a getUserByUsernameLike(),
-    //so the messages can be retrieved by messageId AND userId
-    //The alternative implementation below gets messages by groupId AND username like
-//    @GetMapping("/messages")
-//    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessages(
-//            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam("groupId") Long groupId,
-//            @RequestParam(required = false) String author,
-//            @RequestParam(value = "sortDirection", required = false) String sortDirection)
-//            throws AppObjectNotFoundException {
-//
-//        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
-//                page, groupId, author, sortDirection);
-//
-//        return new ResponseEntity<>(messages, HttpStatus.OK);
-//    }
+    //get messages by group and user
+    @GetMapping("/groups/{groupId}/users/{userId}/messages")
+    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroupAndUser(
+            @PathVariable("groupId") Long groupId,
+            @PathVariable(value = "userId") Long userId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortDirection", required = false) String sortDirection)
+            throws AppObjectNotFoundException {
+
+        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorId(
+                page, groupId, userId, sortDirection);
+
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
+    //The above implementation assumes that the author has already been retrieved by UserRestController.getUsersFiltered(),
+    //so the messages can be retrieved by the messageId AND the userId.
+    //The alternative implementation bellow gets messages by groupId AND filtering by username.
+
+    //get messages by group - filter by username
+    @GetMapping("/groups/{groupId}/messages")
+    public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroupFiltered(
+            @PathVariable("groupId") Long groupId,
+            @RequestParam(required = false) String author,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "sortDirection", required = false) String sortDirection)
+            throws AppObjectNotFoundException {
+
+        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
+                page, groupId, author, sortDirection);
+
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
 
     //get message
-
     @GetMapping("/messages/{messageId}")
     public ResponseEntity<MessageReadOnlyDTO> getMessage(@PathVariable("messageId") Long messageId)
         throws AppObjectNotFoundException {

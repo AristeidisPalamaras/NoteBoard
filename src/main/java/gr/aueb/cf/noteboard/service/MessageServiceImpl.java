@@ -98,6 +98,16 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Transactional
+    public Page<MessageReadOnlyDTO> getMessagesByGroupId(int page, Long groupId, String sortDirection)
+            throws AppObjectNotFoundException {
+
+        Pageable pageable = getPageable(page, sortDirection);
+
+            return messageRepository.findMessagesByGroupId(groupId, pageable)
+                    .map(messageMapper::mapToMessageReadOnlyDTO);
+    }
+
+    @Transactional
     public Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorId(int page, Long groupId, Long authorId, String sortDirection)
             throws AppObjectNotFoundException {
 
