@@ -166,4 +166,14 @@ public class GroupServiceImpl implements IGroupService {
 
         return groups;
     }
+
+    public boolean isOwner(Long groupId, Long userId) {
+        return groupRepository.countByGroupIdAndOwnerId(groupId, userId) > 0;
+    }
+
+
+    public boolean isMember(Long groupId, Long userId) {
+        return groupRepository.countByGroupIdAndMemberId(groupId, userId) > 0;
+    }
+
 }

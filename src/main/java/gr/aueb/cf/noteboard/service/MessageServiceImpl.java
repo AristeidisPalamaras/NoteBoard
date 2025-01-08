@@ -140,6 +140,10 @@ public class MessageServiceImpl implements IMessageService {
                 .map(messageMapper::mapToMessageReadOnlyDTO);
     }
 
+    public boolean isAuthor(Long messageId, Long userId) {
+        return messageRepository.countByMessageIdAndAuthorId(messageId, userId) > 0;
+    }
+
     private Pageable getPageable(int page, String sortDirection) {
         MessagePageable messagePageable = new MessagePageable();
         messagePageable.setPage(page);

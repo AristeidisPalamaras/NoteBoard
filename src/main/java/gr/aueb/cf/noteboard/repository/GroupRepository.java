@@ -1,7 +1,6 @@
 package gr.aueb.cf.noteboard.repository;
 
 import gr.aueb.cf.noteboard.model.Group;
-import gr.aueb.cf.noteboard.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +19,10 @@ public interface GroupRepository extends JpaRepository<Group, Long>,
 
     @Query("SELECT g FROM Group g JOIN g.members u WHERE u.id = :memberId")
     Set<Group> findGroupsByMemberId(@Param("memberId") Long memberId);
+
+    @Query("SELECT COUNT(g) FROM Group g JOIN g.owner u WHERE g.id = :groupId AND u.id = :ownerId")
+    long countByGroupIdAndOwnerId(@Param("groupId") Long groupId, @Param("ownerId") Long ownerId);
+
+    @Query("SELECT COUNT(g) FROM Group g JOIN g.members u WHERE g.id = :groupId AND u.id = :memberId")
+    long countByGroupIdAndMemberId(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 }

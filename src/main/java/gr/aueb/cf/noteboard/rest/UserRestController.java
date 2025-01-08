@@ -1,12 +1,10 @@
 package gr.aueb.cf.noteboard.rest;
 
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
-import gr.aueb.cf.noteboard.core.exceptions.ValidationException;
+import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.model.User;
+import gr.aueb.cf.noteboard.service.IGroupService;
 import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,6 +22,7 @@ import java.util.List;
 public class UserRestController {
 
     private final IUserService userService;
+    private final IGroupService groupService;
 
     //get users - filter by username
     @GetMapping("/users")
@@ -37,7 +37,15 @@ public class UserRestController {
     @GetMapping("/groups/{groupId}/users")
     public ResponseEntity<List<UserReadOnlyDTO>> getUsersByGroupFiltered(
             @PathVariable(value = "groupId") Long groupId,
-            @RequestParam(value = "username", required = false) String username) {
+            @RequestParam(value = "username", required = false) String username,
+            Principal principal)
+        throws AppObjectNotAuthorizedException, AppObjectNotFoundException {
+
+        // You shouldn't be able to see the members of a group if you are not the owner or a member of the group
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         List<UserReadOnlyDTO> users = userService.getUsersByGroupIdAndUsernameLike(groupId, username);
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -58,7 +66,7 @@ public class UserRestController {
     public ResponseEntity<UserReadOnlyDTO> saveUser(
             @Valid @RequestBody UserInsertDTO userInsertDTO,
             BindingResult bindingResult)
-            throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, ValidationException {
+        throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
@@ -66,10 +74,5 @@ public class UserRestController {
 
         UserReadOnlyDTO user = userService.insertUser(userInsertDTO);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
 }

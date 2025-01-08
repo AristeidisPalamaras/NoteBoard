@@ -1,12 +1,11 @@
 package gr.aueb.cf.noteboard.rest;
 
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
-import gr.aueb.cf.noteboard.core.exceptions.ValidationException;
+import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.MessageInsertDTO;
 import gr.aueb.cf.noteboard.dto.MessageReadOnlyDTO;
+import gr.aueb.cf.noteboard.service.IGroupService;
 import gr.aueb.cf.noteboard.service.IMessageService;
+import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,20 +14,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class MessageRestController {
 
     private final IMessageService messageService;
+    private final IUserService userService;
+    private final IGroupService groupService;
 
     //get messages by group
     @GetMapping("/groups/{groupId}/messages")
     public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroup(
             @PathVariable("groupId") Long groupId,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection)
-            throws AppObjectNotFoundException {
+            @RequestParam(value = "sortDirection", required = false) String sortDirection,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //you shouldn't be able to see group messages if you are not the owner or a member of the group
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupId(
                 page, groupId, sortDirection);
@@ -42,8 +52,15 @@ public class MessageRestController {
             @PathVariable("groupId") Long groupId,
             @PathVariable(value = "userId") Long userId,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection)
-            throws AppObjectNotFoundException {
+            @RequestParam(value = "sortDirection", required = false) String sortDirection,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //you shouldn't be able to see group messages if you are not the owner or a member of the group
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorId(
                 page, groupId, userId, sortDirection);
@@ -61,8 +78,16 @@ public class MessageRestController {
 //            @PathVariable("groupId") Long groupId,
 //            @RequestParam(required = false) String author,
 //            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam(value = "sortDirection", required = false) String sortDirection)
-//            throws AppObjectNotFoundException {
+//            @RequestParam(value = "sortDirection", required = false) String sortDirection,
+//            Principal principal)
+//            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+//
+//    //you shouldn't be able to see group messages if you are not the owner or a member of the group
+//
+//    Long principalId = userService.getUserByUsername(principal.getName()).getId();
+//        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+//        throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+//    }
 //
 //        Page<MessageReadOnlyDTO> messages = messageService.getMessagesByGroupIdAndAuthorUsernameLike(
 //                page, groupId, author, sortDirection);
@@ -71,9 +96,18 @@ public class MessageRestController {
 //    }
 
     //get message
-    @GetMapping("/messages/{messageId}")
-    public ResponseEntity<MessageReadOnlyDTO> getMessage(@PathVariable("messageId") Long messageId)
-        throws AppObjectNotFoundException {
+    @GetMapping("/groups/{groupId}/messages/{messageId}")
+    public ResponseEntity<MessageReadOnlyDTO> getMessage(
+            @PathVariable("groupId") Long groupId,
+            @PathVariable("messageId") Long messageId,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //You shouldn't be able to see a message if you are not the owner or a member of the group
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         MessageReadOnlyDTO message = messageService.getMessageById(messageId);
 
@@ -85,7 +119,7 @@ public class MessageRestController {
     public ResponseEntity<MessageReadOnlyDTO> saveMessage(
             @Valid @RequestBody MessageInsertDTO messageInsertDTO,
             BindingResult bindingResult)
-            throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException, ValidationException {
+        throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
@@ -97,8 +131,16 @@ public class MessageRestController {
 
     //delete message
     @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<MessageReadOnlyDTO> deleteMessage(@PathVariable("messageId") Long messageId)
-        throws AppObjectNotFoundException {
+    public ResponseEntity<MessageReadOnlyDTO> deleteMessage(
+            @PathVariable("messageId") Long messageId,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //You shouldn't be able to delete a message if you are not the author
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!messageService.isAuthor(messageId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         MessageReadOnlyDTO message = messageService.getMessageById(messageId);
         messageService.deleteMessage(messageId);

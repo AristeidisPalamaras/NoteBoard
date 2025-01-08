@@ -18,5 +18,6 @@ public interface IGroupService {
     // GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException;
     List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId);
     List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId);
-
+    boolean isOwner(Long groupId, Long userId);
+    boolean isMember(Long groupId, Long userId);
 }

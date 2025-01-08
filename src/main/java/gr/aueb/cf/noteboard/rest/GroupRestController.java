@@ -1,13 +1,11 @@
 package gr.aueb.cf.noteboard.rest;
 
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
-import gr.aueb.cf.noteboard.core.exceptions.ValidationException;
+import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.GroupInsertDTO;
 import gr.aueb.cf.noteboard.dto.GroupReadOnlyDTO;
 import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
 import gr.aueb.cf.noteboard.service.IGroupService;
+import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,7 @@ import java.util.Map;
 public class GroupRestController {
 
     private final IGroupService groupService;
+    private final IUserService userService;
 
     //get groups (owned and joined) by user
     @GetMapping("users/{userId}/groups")
@@ -62,8 +61,16 @@ public class GroupRestController {
 
     //get group
     @GetMapping("/groups/{groupId}")
-    public ResponseEntity<GroupReadOnlyDTO> getGroup(@PathVariable("groupId") Long groupId)
-            throws AppObjectNotFoundException {
+    public ResponseEntity<GroupReadOnlyDTO> getGroup(
+            @PathVariable("groupId") Long groupId,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        // You shouldn't be able to see the information of a group if you are not the owner or a member of the group
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);
 
@@ -75,7 +82,7 @@ public class GroupRestController {
     public ResponseEntity<GroupReadOnlyDTO> saveGroup(
             @Valid @RequestBody GroupInsertDTO groupInsertDTO,
             BindingResult bindingResult)
-            throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AppObjectAlreadyExists, ValidationException {
+        throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AppObjectAlreadyExists, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
@@ -90,8 +97,16 @@ public class GroupRestController {
     public ResponseEntity<GroupReadOnlyDTO> updateGroup(
             @PathVariable("groupId") Long groupId,
             @Valid @RequestBody GroupUpdateDTO groupUpdateDTO,
-            BindingResult bindingResult)
-            throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AppObjectAlreadyExists, ValidationException {
+            BindingResult bindingResult,
+            Principal principal)
+        throws AppObjectInvalidArgumentException, AppObjectAlreadyExists, AppObjectNotFoundException,
+            AppObjectNotAuthorizedException, ValidationException {
+
+        //You shouldn't be able to update a group if you are not the owner
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
@@ -103,8 +118,16 @@ public class GroupRestController {
 
     //delete group
     @DeleteMapping("/groups/{groupId}")
-    public ResponseEntity<GroupReadOnlyDTO> deleteGroup(@PathVariable("groupId") Long groupId)
-            throws AppObjectNotFoundException {
+    public ResponseEntity<GroupReadOnlyDTO> deleteGroup(
+            @PathVariable("groupId") Long groupId,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //You shouldn't able to delete a group if you are not the owner
+        Long peincipalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, peincipalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + peincipalId + " not authorized");
+        }
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);
         groupService.deleteGroup(groupId);

@@ -15,4 +15,5 @@ public interface IMessageService {
     Page<MessageReadOnlyDTO> getMessagesByGroupId(int page, Long groupId, String sortDirection) throws AppObjectNotFoundException;
     Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorId(int page, Long groupId, Long authorId, String sortDirection) throws AppObjectNotFoundException;
     Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorUsernameLike(int page, Long groupId, String username, String sortDirection);
+    boolean isAuthor(Long messageId, Long userId);
 }

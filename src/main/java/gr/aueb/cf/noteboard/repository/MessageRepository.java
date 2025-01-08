@@ -23,4 +23,8 @@ public interface MessageRepository extends JpaRepository<Message, Long>,
 
     @Query("SELECT m FROM Message m JOIN m.group g JOIN m.author a WHERE g.id = :groupId AND a.username LIKE CONCAT('%', :author, '%')")
     Page<Message> findMessagesByGroupIdAndAuthorUsernameLike(@Param("groupId") Long groupId, @Param("author") String author, Pageable pageable);
+
+    @Query("SELECT COUNT(m) FROM Message m JOIN m.author u WHERE m.id = :messageId AND u.id = :authorId")
+    long countByMessageIdAndAuthorId(@Param("messageId") Long messageId, @Param("authorId") Long authorId);
+
 }
