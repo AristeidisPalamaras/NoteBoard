@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -115,12 +116,12 @@ public class GroupServiceImpl implements IGroupService {
             owner.removeOwnedGroup(group);
         }
 
-        Set<User> members = group.getMembers();
+        Set<User> members = new HashSet<>(group.getMembers());
         if (members != null) {
             members.forEach(member -> member.removeJoinedGroup(group));
         }
 
-        Set<Message> messages = group.getMessages();
+        Set<Message> messages = new HashSet<>(group.getMessages());
         if (messages != null) {
             messages.forEach(message -> {
                 messageRepository.delete(message);

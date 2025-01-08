@@ -97,7 +97,7 @@ public class User extends AbstractEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return List.of(new SimpleGrantedAuthority("ROLE_USER")); //todo simplify
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

@@ -46,7 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         jwt = authHeader.substring(7);
 
-
         try {
             username = jwtService.extractSubject(jwt);
             userRole = jwtService.getStringClaim(jwt, "role");

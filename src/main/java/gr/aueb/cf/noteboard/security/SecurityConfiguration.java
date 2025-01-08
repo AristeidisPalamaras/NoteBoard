@@ -48,10 +48,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
                                 .requestMatchers("/api/users/save").permitAll()
                                 .requestMatchers("/api/login").permitAll()
-//                                .requestMatchers("/api/**").authenticated()
-                                .requestMatchers("/api/**").hasAuthority("ROLE_USER")
+//                                .requestMatchers("/api/**").hasAuthority("ROLE_USER") // The current implementation of Authorities is trivial.
+                                                                                        // It does not do anything more than .authenticated()
+                                .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/**").permitAll()
-                        //.authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -60,7 +60,6 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    // todo
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

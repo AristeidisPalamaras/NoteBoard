@@ -22,13 +22,13 @@ public class JwtService {
     private String secretKey = "5ce98d378ec88ea09ba8bcd511ef23645f04cc8e70b9134b98723a53c275bbc5";
     private long jwtExpiration = 10800000;  // 3 hours in milliseconds
 
-    public String generateToken(String username, String role) {//todo simplify
-        HashMap claims = new HashMap<String, Object>();//todo simplify
-        claims.put("role", role);//todo simplify
+    public String generateToken(String username, String role) {
+        HashMap claims = new HashMap<String, Object>();
+        claims.put("role", role);
         return Jwts
                 .builder()
                 .setIssuer("self") // todo
-                .setClaims(claims)//todo simplify
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
