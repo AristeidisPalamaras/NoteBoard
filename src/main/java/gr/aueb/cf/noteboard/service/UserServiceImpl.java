@@ -28,6 +28,9 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackOn = Exception.class)
     public UserReadOnlyDTO insertUser(UserInsertDTO userInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException {
 
+        if (!isPasswordMatch(userInsertDTO))
+            throw new AppObjectInvalidArgumentException("Password", "Password and confirmPassword must match");
+
         if (userRepository.findUserByUsername(userInsertDTO.getUsername()).isPresent()) {
             throw new AppObjectAlreadyExists("User", "User with username " + userInsertDTO.getUsername() + " already exists");
         }
@@ -87,5 +90,13 @@ public class UserServiceImpl implements IUserService {
                 .stream()
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isPasswordMatch(UserInsertDTO userInsertDTO) throws AppObjectInvalidArgumentException {
+
+        if (userInsertDTO.getPassword() == null && userInsertDTO.getConfirmPassword() == null)
+            throw new AppObjectInvalidArgumentException("Password", "Password and confirmPassword are required");
+
+        return userInsertDTO.getPassword().equals(userInsertDTO.getConfirmPassword());
     }
 }

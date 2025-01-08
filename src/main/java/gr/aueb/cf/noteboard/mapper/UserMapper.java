@@ -5,13 +5,14 @@ import gr.aueb.cf.noteboard.dto.UserLoginDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {
 
@@ -28,8 +29,8 @@ public class UserMapper {
         User user = new User();
 
         user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword()); //todo Where do I compare password and confirmPassword?
-//        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+//        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         return user;
     }
