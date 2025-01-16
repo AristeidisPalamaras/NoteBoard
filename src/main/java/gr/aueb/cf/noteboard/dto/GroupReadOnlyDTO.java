@@ -15,7 +15,7 @@ public class GroupReadOnlyDTO {
 
     private Long id;
     private String name;
-//    private UserReadOnlyDTO owner;
-//    private Set<UserReadOnlyDTO> members;
+    private UserReadOnlyDTO owner;
+    private Set<UserReadOnlyDTO> members;
 //    private Set<MessageReadOnlyDTO> messages;
 }

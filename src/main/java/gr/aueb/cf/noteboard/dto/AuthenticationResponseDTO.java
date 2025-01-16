@@ -8,5 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 public class AuthenticationResponseDTO {
     private String username;
+    private Long userId;
     private String token;
 }

@@ -83,7 +83,6 @@ public class MessageRestController {
 //            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 //
 //    //you shouldn't be able to see group messages if you are not the owner or a member of the group
-//
 //    Long principalId = userService.getUserByUsername(principal.getName()).getId();
 //        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
 //        throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");

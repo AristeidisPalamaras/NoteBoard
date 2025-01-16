@@ -22,8 +22,10 @@ public class JwtService {
     private String secretKey = "5ce98d378ec88ea09ba8bcd511ef23645f04cc8e70b9134b98723a53c275bbc5";
     private long jwtExpiration = 10800000;  // 3 hours in milliseconds
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, Long userId, String role) {
         HashMap claims = new HashMap<String, Object>();
+//        claims.put("username", username);
+        claims.put("userId", userId);
         claims.put("role", role);
         return Jwts
                 .builder()

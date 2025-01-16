@@ -16,7 +16,7 @@ public class MessageReadOnlyDTO {
 
     private Long id;
     private String text;
-    private String author;
+    private UserReadOnlyDTO author;
     private LocalDateTime createdAt;
 
     //    private GroupReadOnlyDTO group;

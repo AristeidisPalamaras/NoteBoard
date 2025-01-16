@@ -67,10 +67,10 @@ public class GroupRestController {
         throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
         // You shouldn't be able to see the information of a group if you are not the owner or a member of the group
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+       Long principalId = userService.getUserByUsername(principal.getName()).getId();
+       if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
+           throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+       }
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);
 

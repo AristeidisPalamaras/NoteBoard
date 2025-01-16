@@ -47,11 +47,13 @@ public class SecurityConfiguration {
                 .exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(myCustomAuthenticationEntryPoint()))
                 .authorizeHttpRequests(req -> req
                                 .requestMatchers("/api/users/save").permitAll()
-                                .requestMatchers("/api/login").permitAll()
+                                .requestMatchers("/api/auth/authenticate").permitAll()
 //                                .requestMatchers("/api/**").hasAuthority("ROLE_USER") // The current implementation of Authorities is trivial.
-                                                                                        // It does not do anything more than .authenticated()
+//                                                                                      // It does not do anything more than .authenticated()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/**").permitAll()
+                                
+//                                .anyRequest().permitAll() // Allow all requests without authentication
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())

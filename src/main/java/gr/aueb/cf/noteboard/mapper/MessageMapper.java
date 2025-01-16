@@ -9,13 +9,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MessageMapper {
 
+    private final UserMapper userMapper;
+
     public MessageReadOnlyDTO mapToMessageReadOnlyDTO(Message message) {
 
         MessageReadOnlyDTO dto = new MessageReadOnlyDTO();
 
         dto.setId(message.getId());
         dto.setText(message.getText());
-        dto.setAuthor(message.getAuthor().getUsername());
+        dto.setAuthor(userMapper.mapToUserReadOnlyDTO(message.getAuthor()));
         dto.setCreatedAt(message.getCreatedAt());
 
         return dto;
