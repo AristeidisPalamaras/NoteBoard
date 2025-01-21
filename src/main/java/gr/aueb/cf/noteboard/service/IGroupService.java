@@ -16,8 +16,8 @@ public interface IGroupService {
     void deleteGroup(Long id) throws AppObjectNotFoundException;
     GroupReadOnlyDTO getGroupById(Long id) throws AppObjectNotFoundException;
     // GroupReadOnlyDTO getGroupByName(String name) throws AppObjectNotFoundException;
-    List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId);
-    List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId);
-    boolean isOwner(Long groupId, Long userId);
-    boolean isMember(Long groupId, Long userId);
+    List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId) throws AppObjectNotFoundException;
+    List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId) throws AppObjectNotFoundException;
+    boolean isOwner(Long groupId, Long userId) throws AppObjectNotFoundException;
+    boolean isMember(Long groupId, Long userId) throws AppObjectNotFoundException;
 }

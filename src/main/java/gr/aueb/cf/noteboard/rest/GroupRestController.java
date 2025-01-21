@@ -28,7 +28,8 @@ public class GroupRestController {
 
     //get groups (owned and joined) by user
     @GetMapping("users/{userId}/groups")
-    public ResponseEntity<Map<String, Object>> getGroupsByUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Map<String, Object>> getGroupsByUser(@PathVariable("userId") Long userId)
+            throws  AppObjectNotFoundException {
 
         Map<String, Object> groups = new HashMap<>();
 
@@ -45,7 +46,8 @@ public class GroupRestController {
 
     //get groups by owner
     @GetMapping("/users/{userId}/ownedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroupsByUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroupsByUser(@PathVariable("userId") Long userId)
+            throws AppObjectNotFoundException {
 
         List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(userId);
         return new ResponseEntity<>(ownedGroups, HttpStatus.OK);
@@ -53,10 +55,11 @@ public class GroupRestController {
 
     //get groups by member
     @GetMapping("/users/{userId}/joinedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroupsByUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroupsByUser(@PathVariable("userId") Long userId)
+            throws AppObjectNotFoundException {
 
-            List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(userId);
-            return new ResponseEntity<>(joinedGroups, HttpStatus.OK);
+        List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(userId);
+        return new ResponseEntity<>(joinedGroups, HttpStatus.OK);
     }
 
     //get group
@@ -99,8 +102,7 @@ public class GroupRestController {
             @Valid @RequestBody GroupUpdateDTO groupUpdateDTO,
             BindingResult bindingResult,
             Principal principal)
-        throws AppObjectInvalidArgumentException, AppObjectAlreadyExists, AppObjectNotFoundException,
-            AppObjectNotAuthorizedException, ValidationException {
+        throws AppObjectInvalidArgumentException, AppObjectNotFoundException, AppObjectNotAuthorizedException, ValidationException {
 
         //You shouldn't be able to update a group if you are not the owner
         Long principalId = userService.getUserByUsername(principal.getName()).getId();
@@ -124,9 +126,9 @@ public class GroupRestController {
         throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
         //You shouldn't able to delete a group if you are not the owner
-        Long peincipalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, peincipalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + peincipalId + " not authorized");
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+        if (!groupService.isOwner(groupId, principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
         }
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);

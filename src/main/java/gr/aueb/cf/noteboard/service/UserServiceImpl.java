@@ -6,7 +6,6 @@ import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.mapper.UserMapper;
-import gr.aueb.cf.noteboard.model.Group;
 import gr.aueb.cf.noteboard.model.User;
 import gr.aueb.cf.noteboard.repository.GroupRepository;
 import gr.aueb.cf.noteboard.repository.UserRepository;

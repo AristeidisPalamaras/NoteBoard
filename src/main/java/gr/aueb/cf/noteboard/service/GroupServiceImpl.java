@@ -74,6 +74,15 @@ public class GroupServiceImpl implements IGroupService {
         Group group = groupRepository.findGroupById(groupUpdateDTO.getId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupUpdateDTO.getId() + " not found"));
 
+        if (groupUpdateDTO.getRemoveMembers() != null && groupUpdateDTO.getAddMembers() != null) {
+            for (String username : groupUpdateDTO.getRemoveMembers()) {
+                if (groupUpdateDTO.getAddMembers().contains(username)) {
+                    throw new AppObjectInvalidArgumentException("Validation", "User with name " + username +
+                            " appears in both the list of members to add and the list of members to remove");
+                }
+            }
+        }
+
         if (groupUpdateDTO.getRemoveMembers() != null) {
             for (String username : groupUpdateDTO.getRemoveMembers()) {
                 User member = userRepository.findUserByGroupIdAndUsername(groupUpdateDTO.getId(), username)
@@ -108,7 +117,7 @@ public class GroupServiceImpl implements IGroupService {
     @Transactional(rollbackOn = Exception.class)
     public void deleteGroup(Long id) throws AppObjectNotFoundException {
 
-        Group group = groupRepository.findById(id)
+        Group group = groupRepository.findGroupById(id)
                 .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + id + " not found"));
 
         User owner = group.getOwner();
@@ -142,9 +151,12 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Transactional
-    public List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId) {
+    public List<GroupReadOnlyDTO> getGroupsByOwnerId(Long ownerId) throws AppObjectNotFoundException {
 
         List<GroupReadOnlyDTO> groups;
+
+        userRepository.findUserById(ownerId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + ownerId + " not found"));
 
         groups = groupRepository.findGroupsByOwnerId(ownerId)
                 .stream()
@@ -155,9 +167,12 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Transactional
-    public List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId) {
+    public List<GroupReadOnlyDTO> getGroupsByMemberId(Long memberId) throws AppObjectNotFoundException {
 
         List<GroupReadOnlyDTO> groups;
+
+        userRepository.findUserById(memberId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + memberId + " not found"));
 
         groups = groupRepository.findGroupsByMemberId(memberId)
                 .stream()
@@ -167,12 +182,26 @@ public class GroupServiceImpl implements IGroupService {
         return groups;
     }
 
-    public boolean isOwner(Long groupId, Long userId) {
+    public boolean isOwner(Long groupId, Long userId) throws AppObjectNotFoundException {
+
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
+
+        userRepository.findUserById(userId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + userId + " not found"));
+
         return groupRepository.countByGroupIdAndOwnerId(groupId, userId) > 0;
     }
 
 
-    public boolean isMember(Long groupId, Long userId) {
+    public boolean isMember(Long groupId, Long userId) throws AppObjectNotFoundException {
+
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
+
+        userRepository.findUserById(userId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + userId + " not found"));
+
         return groupRepository.countByGroupIdAndMemberId(groupId, userId) > 0;
     }
 
