@@ -10,6 +10,6 @@ import java.util.List;
 public interface IReactionService {
 
     ReactionReadOnlyDTO insertReaction(ReactionInsertDTO reactionInsertDTO) throws AppObjectAlreadyExists, AppObjectNotFoundException;
-    List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId);
-    List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId);
+    List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId) throws AppObjectNotFoundException;
+    List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId) throws AppObjectNotFoundException;
 }

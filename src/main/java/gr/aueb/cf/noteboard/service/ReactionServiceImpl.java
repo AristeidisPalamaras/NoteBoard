@@ -65,9 +65,12 @@ public class ReactionServiceImpl implements IReactionService {
     }
 
     @Transactional
-    public List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId) {
+    public List<ReactionReadOnlyDTO> getReactionsByMessageId(Long messageId) throws AppObjectNotFoundException {
 
         List<ReactionReadOnlyDTO> reactions;
+
+        messageRepository.findMessageById(messageId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + messageId + " not found"));
 
         reactions = reactionRepository.findReactionsByMessageId(messageId)
                 .stream()
@@ -78,9 +81,15 @@ public class ReactionServiceImpl implements IReactionService {
     }
 
     @Transactional
-    public List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId) {
+    public List<ReactionReadOnlyDTO> getReactionsByMessageIdAndUserId(Long messageId, Long userId) throws AppObjectNotFoundException {
 
         List<ReactionReadOnlyDTO> reactions;
+
+        messageRepository.findMessageById(messageId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + messageId + " not found"));
+
+        userRepository.findUserById(userId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + userId + " not found"));
 
         reactions = reactionRepository.findReactionsByMessageIdAndUserId(messageId, userId)
                 .stream()

@@ -69,7 +69,7 @@ public class ReactionRestController {
     public ResponseEntity<ReactionReadOnlyDTO> saveReaction(
             @Valid @RequestBody ReactionInsertDTO reactionInsertDTO,
             BindingResult bindingResult)
-        throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException, ValidationException {
+        throws AppObjectAlreadyExists, AppObjectNotFoundException, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
