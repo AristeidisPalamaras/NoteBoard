@@ -99,6 +99,9 @@ public class MessageServiceImpl implements IMessageService {
     public Page<MessageReadOnlyDTO> getMessagesByGroupId(int page, Long groupId, String sortDirection)
             throws AppObjectNotFoundException {
 
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
+
         Pageable pageable = getPageable(page, sortDirection);
 
             return messageRepository.findMessagesByGroupId(groupId, pageable)
@@ -111,23 +114,24 @@ public class MessageServiceImpl implements IMessageService {
 
         Pageable pageable = getPageable(page, sortDirection);
 
-        if ( authorId == null ) {
-            return messageRepository.findMessagesByGroupId(groupId, pageable)
-                .map(messageMapper::mapToMessageReadOnlyDTO);
-        }
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
 
-        if (userRepository.findUserById(authorId) == null) {
-            throw new AppObjectNotFoundException("User", "User with id " + authorId + " not found");
-        }
+        userRepository.findUserById(authorId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + authorId + " not found"));
 
         return messageRepository.findMessagesByGroupIdAndAuthorId(groupId, authorId, pageable)
                     .map(messageMapper::mapToMessageReadOnlyDTO);
     }
 
     @Transactional
-    public Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorUsernameLike(int page, Long groupId, String username, String sortDirection) {
+    public Page<MessageReadOnlyDTO> getMessagesByGroupIdAndAuthorUsernameLike(int page, Long groupId, String username, String sortDirection)
+            throws AppObjectNotFoundException {
 
         Pageable pageable = getPageable(page, sortDirection);
+
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
 
         if ( username == null || username.isBlank() ) {
             return messageRepository.findMessagesByGroupId(groupId, pageable)
@@ -138,7 +142,14 @@ public class MessageServiceImpl implements IMessageService {
                 .map(messageMapper::mapToMessageReadOnlyDTO);
     }
 
-    public boolean isAuthor(Long messageId, Long userId) {
+    public boolean isAuthor(Long messageId, Long userId) throws AppObjectNotFoundException {
+
+        messageRepository.findMessageById(messageId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Message", "Message with id " + messageId + " not found"));
+
+        userRepository.findUserById(userId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with id " + userId + " not found"));
+
         return messageRepository.countByMessageIdAndAuthorId(messageId, userId) > 0;
     }
 

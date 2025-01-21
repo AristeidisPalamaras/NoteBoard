@@ -3,7 +3,6 @@ package gr.aueb.cf.noteboard.rest;
 import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
-import gr.aueb.cf.noteboard.model.User;
 import gr.aueb.cf.noteboard.service.IGroupService;
 import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
@@ -36,7 +35,7 @@ public class UserRestController {
     //get users by group - filter by username
     @GetMapping("/groups/{groupId}/users")
     public ResponseEntity<List<UserReadOnlyDTO>> getUsersByGroupFiltered(
-            @PathVariable(value = "groupId") Long groupId,
+            @PathVariable("groupId") Long groupId,
             @RequestParam(value = "username", required = false) String username,
             Principal principal)
         throws AppObjectNotAuthorizedException, AppObjectNotFoundException {
@@ -53,7 +52,7 @@ public class UserRestController {
 
     //get user
     @GetMapping("/users/{userId}")
-    public ResponseEntity<UserReadOnlyDTO> getUser(@PathVariable Long userId)
+    public ResponseEntity<UserReadOnlyDTO> getUser(@PathVariable("userId") Long userId)
         throws AppObjectNotFoundException {
 
         UserReadOnlyDTO user = userService.getUserById(userId);

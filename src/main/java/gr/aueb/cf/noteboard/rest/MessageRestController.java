@@ -50,7 +50,7 @@ public class MessageRestController {
     @GetMapping("/groups/{groupId}/users/{userId}/messages")
     public ResponseEntity<Page<MessageReadOnlyDTO>> getMessagesByGroupAndUser(
             @PathVariable("groupId") Long groupId,
-            @PathVariable(value = "userId") Long userId,
+            @PathVariable("userId") Long userId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "sortDirection", required = false) String sortDirection,
             Principal principal)
@@ -118,7 +118,7 @@ public class MessageRestController {
     public ResponseEntity<MessageReadOnlyDTO> saveMessage(
             @Valid @RequestBody MessageInsertDTO messageInsertDTO,
             BindingResult bindingResult)
-        throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException, ValidationException {
+        throws AppObjectNotFoundException, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
