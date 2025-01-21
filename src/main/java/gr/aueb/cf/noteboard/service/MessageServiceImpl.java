@@ -1,8 +1,6 @@
 package gr.aueb.cf.noteboard.service;
 
 import gr.aueb.cf.noteboard.core.pageables.MessagePageable;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.dto.MessageInsertDTO;
 import gr.aueb.cf.noteboard.dto.MessageReadOnlyDTO;
@@ -40,20 +38,20 @@ public class MessageServiceImpl implements IMessageService {
 
     @Transactional
     public MessageReadOnlyDTO insertMessage(MessageInsertDTO messageInsertDTO)
-            throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException {
+            throws AppObjectNotFoundException {
 
         Message message = new Message();
         message.setText(messageInsertDTO.getText());
 
         User author = userRepository.findUserByUsername(messageInsertDTO.getAuthor())
                 .orElseThrow(() -> new AppObjectNotFoundException("User",
-                        "User with username " + messageInsertDTO.getAuthor() + " not found"));
+                        "User with name " + messageInsertDTO.getAuthor() + " not found"));
         message.setAuthor(author);
         // author.addAuthoredMessage(message);
 
         Group group = groupRepository.findGroupById(messageInsertDTO.getGroupId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Group",
-                        "Group with name " + messageInsertDTO.getGroupId() + " not found"));
+                        "Group with id " + messageInsertDTO.getGroupId() + " not found"));
 
         message.setGroup(group);
         // group.addMessage(message);
@@ -119,7 +117,7 @@ public class MessageServiceImpl implements IMessageService {
         }
 
         if (userRepository.findUserById(authorId) == null) {
-            throw new AppObjectNotFoundException("Author", "Author with id " + authorId + " not found");
+            throw new AppObjectNotFoundException("User", "User with id " + authorId + " not found");
         }
 
         return messageRepository.findMessagesByGroupIdAndAuthorId(groupId, authorId, pageable)

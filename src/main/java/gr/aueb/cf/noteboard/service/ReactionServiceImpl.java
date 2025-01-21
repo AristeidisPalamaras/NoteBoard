@@ -1,7 +1,6 @@
 package gr.aueb.cf.noteboard.service;
 
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectInvalidArgumentException;
 import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.dto.ReactionInsertDTO;
 import gr.aueb.cf.noteboard.dto.ReactionReadOnlyDTO;
@@ -34,13 +33,15 @@ public class ReactionServiceImpl implements IReactionService {
 
     @Transactional
     public ReactionReadOnlyDTO insertReaction(ReactionInsertDTO reactionInsertDTO)
-            throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, AppObjectNotFoundException {
+            throws AppObjectAlreadyExists, AppObjectNotFoundException {
 
         if (reactionRepository.findReactionByMessageIdAndUserIdAndDescription(
                 reactionInsertDTO.getMessageId(),
                 reactionInsertDTO.getUser(),
                 reactionInsertDTO.getDescription()).isPresent()) {
-            throw new AppObjectAlreadyExists("Reaction", "Reaction already exists");
+            throw new AppObjectAlreadyExists("Reaction", "Reaction with description " + reactionInsertDTO.getDescription()
+                    + " already exists for user with name " + reactionInsertDTO.getUser() + " and message with id "
+                    + reactionInsertDTO.getMessageId());
         }
 
         Reaction reaction = new Reaction();
@@ -53,7 +54,7 @@ public class ReactionServiceImpl implements IReactionService {
         // message.addReaction(reaction);
 
         User user = userRepository.findUserByUsername(reactionInsertDTO.getUser())
-                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with username " + reactionInsertDTO.getUser() + " not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + reactionInsertDTO.getUser() + " not found"));
 
         reaction.setUser(user);
         // user.addReaction(reaction);

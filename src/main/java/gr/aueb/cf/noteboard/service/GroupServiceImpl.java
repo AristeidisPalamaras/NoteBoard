@@ -45,7 +45,7 @@ public class GroupServiceImpl implements IGroupService {
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + groupInsertDTO.getOwner() + " not found"));
 
         if (owner.getOwnedGroups().stream().map(Group::getName).collect(Collectors.toSet()).contains(group.getName())) {
-            throw new AppObjectAlreadyExists("Group", "Group with name " + groupInsertDTO.getName() + " already exists");
+            throw new AppObjectAlreadyExists("Group", "Group with name " + groupInsertDTO.getName() + " already exists for user with name " + groupInsertDTO.getOwner());
         }
 
         group.setOwner(owner);
@@ -56,7 +56,7 @@ public class GroupServiceImpl implements IGroupService {
                     .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
             if (member.getId().equals(owner.getId())) {
-                throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+                throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group anc can not be added as member");
             }
 
             group.addMember(member);
@@ -89,11 +89,11 @@ public class GroupServiceImpl implements IGroupService {
                         .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
                 if (member.getId().equals(group.getOwner().getId())) {
-                    throw new AppObjectInvalidArgumentException("User", "The owner of the group can not be added as a member");
+                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group anc can not be added as member");
                 }
 
                 if (group.getMembers().contains(member)) {
-                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is already in the group");
+                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is already a member of the group");
                 }
 
                 group.addMember(member);

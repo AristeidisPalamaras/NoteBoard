@@ -29,10 +29,10 @@ public class UserServiceImpl implements IUserService {
     public UserReadOnlyDTO insertUser(UserInsertDTO userInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException {
 
         if (!isPasswordMatch(userInsertDTO))
-            throw new AppObjectInvalidArgumentException("Password", "Password and confirmPassword must match");
+            throw new AppObjectInvalidArgumentException("Validation", "Password and confirmPassword must match");
 
         if (userRepository.findUserByUsername(userInsertDTO.getUsername()).isPresent()) {
-            throw new AppObjectAlreadyExists("User", "User with username " + userInsertDTO.getUsername() + " already exists");
+            throw new AppObjectAlreadyExists("User", "User with name " + userInsertDTO.getUsername() + " already exists");
         }
 
         User user = userRepository.save(userMapper.mapToUser(userInsertDTO));
@@ -55,7 +55,7 @@ public class UserServiceImpl implements IUserService {
 
         UserReadOnlyDTO userReadOnlyDTO = userRepository.findUserByUsername(username)
                 .map(userMapper::mapToUserReadOnlyDTO)
-                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with username " + username + " not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
         return userReadOnlyDTO;
     }
@@ -92,10 +92,7 @@ public class UserServiceImpl implements IUserService {
                 .collect(Collectors.toList());
     }
 
-    private boolean isPasswordMatch(UserInsertDTO userInsertDTO) throws AppObjectInvalidArgumentException {
-
-        if (userInsertDTO.getPassword() == null && userInsertDTO.getConfirmPassword() == null)
-            throw new AppObjectInvalidArgumentException("Password", "Password and confirmPassword are required");
+    private boolean isPasswordMatch(UserInsertDTO userInsertDTO) {
 
         return userInsertDTO.getPassword().equals(userInsertDTO.getConfirmPassword());
     }
