@@ -6,7 +6,9 @@ import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.mapper.UserMapper;
+import gr.aueb.cf.noteboard.model.Group;
 import gr.aueb.cf.noteboard.model.User;
+import gr.aueb.cf.noteboard.repository.GroupRepository;
 import gr.aueb.cf.noteboard.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class UserServiceImpl implements IUserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
     private final UserMapper userMapper;
 
     @Transactional(rollbackOn = Exception.class)
@@ -77,7 +80,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Transactional
-    public List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username) {
+    public List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username) throws AppObjectNotFoundException {
+
+        groupRepository.findGroupById(groupId)
+                .orElseThrow(() -> new AppObjectNotFoundException("Group", "Group with id " + groupId + " not found"));
+
 
         if (username == null || username.isBlank()) {
             return userRepository.findUsersByGroupId(groupId)

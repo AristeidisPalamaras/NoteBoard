@@ -14,5 +14,5 @@ public interface IUserService {
     UserReadOnlyDTO getUserById(Long id) throws AppObjectNotFoundException;
     UserReadOnlyDTO getUserByUsername(String username) throws AppObjectNotFoundException;
     List<UserReadOnlyDTO> getUsersByUsernameLike(String username);
-    List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username);
+    List<UserReadOnlyDTO> getUsersByGroupIdAndUsernameLike(Long groupId, String username) throws AppObjectNotFoundException;
 }
