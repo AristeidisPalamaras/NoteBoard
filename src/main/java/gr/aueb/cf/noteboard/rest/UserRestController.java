@@ -1,9 +1,9 @@
 package gr.aueb.cf.noteboard.rest;
 
+import gr.aueb.cf.noteboard.authentication.AuthorizationService;
 import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
-import gr.aueb.cf.noteboard.service.IGroupService;
 import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 public class UserRestController {
 
     private final IUserService userService;
-    private final IGroupService groupService;
+    private final AuthorizationService authorizationService;
 
     //get users - filter by username
     @GetMapping("/users")
@@ -41,10 +41,7 @@ public class UserRestController {
         throws AppObjectNotAuthorizedException, AppObjectNotFoundException {
 
         // You shouldn't be able to see the members of a group if you are not the owner or a member of the group
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+        authorizationService.isOwnerOrMemberOrThrow(groupId, principal);
 
         List<UserReadOnlyDTO> users = userService.getUsersByGroupIdAndUsernameLike(groupId, username);
         return new ResponseEntity<>(users, HttpStatus.OK);

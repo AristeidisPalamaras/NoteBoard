@@ -23,6 +23,7 @@ public class AuthRestController {
 
     private final AuthenticationService authenticationService;
 
+    //login
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO)
             throws AppObjectNotAuthorizedException {

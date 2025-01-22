@@ -1,11 +1,11 @@
 package gr.aueb.cf.noteboard.rest;
 
+import gr.aueb.cf.noteboard.authentication.AuthorizationService;
 import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.GroupInsertDTO;
 import gr.aueb.cf.noteboard.dto.GroupReadOnlyDTO;
 import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
 import gr.aueb.cf.noteboard.service.IGroupService;
-import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class GroupRestController {
 
     private final IGroupService groupService;
-    private final IUserService userService;
+    private final AuthorizationService authorizationService;
 
     //get groups (owned and joined) by user
     @GetMapping("users/{userId}/groups")
@@ -70,10 +70,7 @@ public class GroupRestController {
         throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
         // You shouldn't be able to see the information of a group if you are not the owner or a member of the group
-       Long principalId = userService.getUserByUsername(principal.getName()).getId();
-       if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
-           throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-       }
+        authorizationService.isOwnerOrMemberOrThrow(groupId, principal);
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);
 
@@ -105,10 +102,7 @@ public class GroupRestController {
         throws AppObjectInvalidArgumentException, AppObjectNotFoundException, AppObjectNotAuthorizedException, ValidationException {
 
         //You shouldn't be able to update a group if you are not the owner
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+        authorizationService.isOwnerOrThrow(groupId, principal);
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
@@ -126,10 +120,7 @@ public class GroupRestController {
         throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
         //You shouldn't able to delete a group if you are not the owner
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+        authorizationService.isOwnerOrThrow(groupId, principal);
 
         GroupReadOnlyDTO group = groupService.getGroupById(groupId);
         groupService.deleteGroup(groupId);

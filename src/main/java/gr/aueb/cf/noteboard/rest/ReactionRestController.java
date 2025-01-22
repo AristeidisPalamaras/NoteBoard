@@ -1,11 +1,10 @@
 package gr.aueb.cf.noteboard.rest;
 
+import gr.aueb.cf.noteboard.authentication.AuthorizationService;
 import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.ReactionInsertDTO;
 import gr.aueb.cf.noteboard.dto.ReactionReadOnlyDTO;
-import gr.aueb.cf.noteboard.service.IGroupService;
 import gr.aueb.cf.noteboard.service.IReactionService;
-import gr.aueb.cf.noteboard.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,8 +21,7 @@ import java.util.List;
 public class ReactionRestController {
 
     private final IReactionService reactionService;
-    private final IUserService userService;
-    private final IGroupService groupService;
+    private final AuthorizationService authorizationService;
 
     //get reactions by message
     @GetMapping("/groups/{groupId}/messages/{messageId}/reactions")
@@ -34,10 +32,7 @@ public class ReactionRestController {
         throws AppObjectNotAuthorizedException, AppObjectNotFoundException {
 
         //You shouldn't be able to see reactions to a group message if you are not the owner or a member of the group
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+        authorizationService.isOwnerOrMemberOrThrow(groupId, principal);
 
         List<ReactionReadOnlyDTO> reactions = reactionService.getReactionsByMessageId(messageId);
 
@@ -54,10 +49,7 @@ public class ReactionRestController {
         throws AppObjectNotAuthorizedException, AppObjectNotFoundException {
 
         //You shouldn't be able to see reactions to a group message if you are not the owner or a member of the group
-        Long principalId = userService.getUserByUsername(principal.getName()).getId();
-        if (!groupService.isOwner(groupId, principalId) && !groupService.isMember(groupId, principalId)) {
-            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
-        }
+        authorizationService.isOwnerOrMemberOrThrow(groupId, principal);
 
         List<ReactionReadOnlyDTO> reactions = reactionService.getReactionsByMessageIdAndUserId(messageId, userId);
 
