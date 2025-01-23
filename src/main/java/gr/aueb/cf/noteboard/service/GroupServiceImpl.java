@@ -98,7 +98,7 @@ public class GroupServiceImpl implements IGroupService {
                         .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
                 if (member.getId().equals(group.getOwner().getId())) {
-                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group anc can not be added as member");
+                    throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group and can not be added as member");
                 }
 
                 if (group.getMembers().contains(member)) {

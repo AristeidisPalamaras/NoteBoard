@@ -2,6 +2,7 @@ package gr.aueb.cf.noteboard.core;
 
 import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.ResponseMessageDTO;
+import gr.aueb.cf.noteboard.dto.ValidationMessageDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,16 +19,16 @@ import java.util.Map;
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(ValidationException ex) {
+    public ResponseEntity<ValidationMessageDTO> handleValidationException(ValidationException e) {
         // Extract validation errors from BindingResult
-        BindingResult bindingResult = ex.getBindingResult();
+        BindingResult bindingResult = e.getBindingResult();
 
         Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ValidationMessageDTO(e.getCode(), errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({AppObjectNotFoundException.class})
