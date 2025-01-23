@@ -103,12 +103,19 @@ public class MessageRestController {
     @PostMapping("/messages/save")
     public ResponseEntity<MessageReadOnlyDTO> saveMessage(
             @Valid @RequestBody MessageInsertDTO messageInsertDTO,
-            BindingResult bindingResult)
-        throws AppObjectNotFoundException, ValidationException {
+            BindingResult bindingResult,
+            Principal principal)
+        throws AppObjectNotFoundException, ValidationException, AppObjectNotAuthorizedException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
+
+        //Logged-in user should not be able to add messages to groups they are not members/owner
+        authorizationService.isOwnerOrMemberOrThrow(messageInsertDTO.getGroupId(), principal);
+
+        //Logged-in user should not be able to create a message with another user as author
+        authorizationService.isPrincipalOrThrow(messageInsertDTO.getAuthor(), principal);
 
         MessageReadOnlyDTO message = messageService.insertMessage(messageInsertDTO);
         return new ResponseEntity<>(message, HttpStatus.CREATED);

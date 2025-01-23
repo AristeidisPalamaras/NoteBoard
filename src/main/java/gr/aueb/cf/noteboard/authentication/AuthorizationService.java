@@ -18,6 +18,29 @@ public class AuthorizationService {
     private final GroupServiceImpl groupService;
     private final MessageServiceImpl messageService;
 
+    public void isPrincipalOrThrow(Long userId, Principal principal)
+            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        userService.getUserById(userId);
+
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+
+        if (!userId.equals(principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
+    }
+
+    public void isPrincipalOrThrow(String username, Principal principal)
+            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        Long userId = userService.getUserByUsername(username).getId();
+        Long principalId = userService.getUserByUsername(principal.getName()).getId();
+
+        if (!userId.equals(principalId)) {
+            throw new AppObjectNotAuthorizedException("User", "User with id " + principalId + " not authorized");
+        }
+    }
+
     public void isOwnerOrThrow(Long groupId, Principal principal)
             throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
 

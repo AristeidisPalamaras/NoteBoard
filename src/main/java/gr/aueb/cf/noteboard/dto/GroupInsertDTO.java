@@ -20,7 +20,7 @@ public class GroupInsertDTO {
     @Size(max = 120, message = "Name must be less than 120 characters")
     private String name;
 
-    @NotNull(message = "Owner is required")
+    @NotEmpty(message = "Owner is required")
     private String owner;
 
     private Set<String> members;

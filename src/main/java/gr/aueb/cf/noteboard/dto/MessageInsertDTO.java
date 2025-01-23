@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class MessageInsertDTO {
 
-    @NotNull(message = "Author is required")
+    @NotEmpty(message = "Author is required")
     private String author;
 
     @NotNull(message = "Group is required")

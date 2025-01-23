@@ -28,10 +28,15 @@ public class GroupRestController {
 
     //get groups (owned and joined) by user
     @GetMapping("users/{userId}/groups")
-    public ResponseEntity<Map<String, Object>> getGroupsByUser(@PathVariable("userId") Long userId)
-            throws  AppObjectNotFoundException {
+    public ResponseEntity<Map<String, Object>> getGroupsByUser(
+            @PathVariable("userId") Long userId,
+            Principal principal)
+        throws  AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
         Map<String, Object> groups = new HashMap<>();
+
+        //Logged-in user should not be able to see the group list of other users
+        authorizationService.isPrincipalOrThrow(userId, principal);
 
         List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(userId);
         groups.put("ownedGroups", ownedGroups);
@@ -46,8 +51,13 @@ public class GroupRestController {
 
     //get groups by owner
     @GetMapping("/users/{userId}/ownedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroupsByUser(@PathVariable("userId") Long userId)
-            throws AppObjectNotFoundException {
+    public ResponseEntity<List<GroupReadOnlyDTO>> getOwnedGroupsByUser(
+            @PathVariable("userId") Long userId,
+            Principal principal)
+            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //Logged-in user should not be able to see the group list of other users
+        authorizationService.isPrincipalOrThrow(userId, principal);
 
         List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(userId);
         return new ResponseEntity<>(ownedGroups, HttpStatus.OK);
@@ -55,8 +65,13 @@ public class GroupRestController {
 
     //get groups by member
     @GetMapping("/users/{userId}/joinedGroups")
-    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroupsByUser(@PathVariable("userId") Long userId)
-            throws AppObjectNotFoundException {
+    public ResponseEntity<List<GroupReadOnlyDTO>> getJoinedGroupsByUser(
+            @PathVariable("userId") Long userId,
+            Principal principal)
+            throws AppObjectNotFoundException, AppObjectNotAuthorizedException {
+
+        //Logged-in user should not be able to see the group list of other users
+        authorizationService.isPrincipalOrThrow(userId, principal);
 
         List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(userId);
         return new ResponseEntity<>(joinedGroups, HttpStatus.OK);
@@ -81,12 +96,16 @@ public class GroupRestController {
     @PostMapping("/groups/save")
     public ResponseEntity<GroupReadOnlyDTO> saveGroup(
             @Valid @RequestBody GroupInsertDTO groupInsertDTO,
-            BindingResult bindingResult)
-        throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AppObjectAlreadyExists, ValidationException {
+            BindingResult bindingResult,
+            Principal principal)
+        throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AppObjectAlreadyExists, ValidationException, AppObjectNotAuthorizedException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
+
+        // Logged-in user should not be able to create a group owned by another user
+        authorizationService.isPrincipalOrThrow(groupInsertDTO.getOwner(), principal);
 
         GroupReadOnlyDTO group = groupService.insertGroup(groupInsertDTO);
         return new ResponseEntity<>(group, HttpStatus.CREATED);
@@ -101,12 +120,12 @@ public class GroupRestController {
             Principal principal)
         throws AppObjectInvalidArgumentException, AppObjectNotFoundException, AppObjectNotAuthorizedException, ValidationException {
 
-        //You shouldn't be able to update a group if you are not the owner
-        authorizationService.isOwnerOrThrow(groupId, principal);
-
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
+
+        //You shouldn't be able to update a group if you are not the owner
+        authorizationService.isOwnerOrThrow(groupId, principal);
 
         GroupReadOnlyDTO group = groupService.updateGroup(groupUpdateDTO);
         return new ResponseEntity<>(group, HttpStatus.OK);

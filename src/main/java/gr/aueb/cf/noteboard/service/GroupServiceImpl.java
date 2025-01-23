@@ -56,7 +56,7 @@ public class GroupServiceImpl implements IGroupService {
                     .orElseThrow(() -> new AppObjectNotFoundException("User", "User with name " + username + " not found"));
 
             if (member.getId().equals(owner.getId())) {
-                throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group anc can not be added as member");
+                throw new AppObjectInvalidArgumentException("User", "User with name " + username + " is the owner of the group and can not be added as member");
             }
 
             group.addMember(member);
@@ -77,7 +77,7 @@ public class GroupServiceImpl implements IGroupService {
         if (groupUpdateDTO.getRemoveMembers() != null && groupUpdateDTO.getAddMembers() != null) {
             for (String username : groupUpdateDTO.getRemoveMembers()) {
                 if (groupUpdateDTO.getAddMembers().contains(username)) {
-                    throw new AppObjectInvalidArgumentException("Validation", "User with name " + username +
+                    throw new AppObjectInvalidArgumentException("User", "User with name " + username +
                             " appears in both the list of members to add and the list of members to remove");
                 }
             }

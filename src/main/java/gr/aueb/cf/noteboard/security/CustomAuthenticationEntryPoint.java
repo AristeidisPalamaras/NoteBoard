@@ -17,7 +17,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         // Write a custom error message or JSON structure
         //String json = String.format("{\"message\": \"%s\", \"error\": \"Unauthorized\"}", authException.getMessage());
-        String json = "{\"code\": \"userNotAuthenticated\", \"description\": \"User needs to authenticate in order to access this route\"}";
+        String json = "{\"code\": \"UserNotAuthenticated\", \"description\": \"User needs to authenticate in order to access this route\"}";
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);

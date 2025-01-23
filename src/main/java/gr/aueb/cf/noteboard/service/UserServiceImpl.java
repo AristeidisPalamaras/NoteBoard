@@ -31,7 +31,7 @@ public class UserServiceImpl implements IUserService {
     public UserReadOnlyDTO insertUser(UserInsertDTO userInsertDTO) throws AppObjectAlreadyExists, AppObjectInvalidArgumentException {
 
         if (!isPasswordMatch(userInsertDTO))
-            throw new AppObjectInvalidArgumentException("Validation", "Password and confirmPassword must match");
+            throw new AppObjectInvalidArgumentException("Password", "Password and confirmPassword must match");
 
         if (userRepository.findUserByUsername(userInsertDTO.getUsername()).isPresent()) {
             throw new AppObjectAlreadyExists("User", "User with name " + userInsertDTO.getUsername() + " already exists");

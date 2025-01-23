@@ -1,7 +1,6 @@
 package gr.aueb.cf.noteboard.mapper;
 
 import gr.aueb.cf.noteboard.dto.UserInsertDTO;
-import gr.aueb.cf.noteboard.dto.UserLoginDTO;
 import gr.aueb.cf.noteboard.dto.UserReadOnlyDTO;
 import gr.aueb.cf.noteboard.model.User;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +28,7 @@ public class UserMapper {
         User user = new User();
 
         user.setUsername(dto.getUsername());
-//        user.setPassword(dto.getPassword());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        return user;
-    }
-
-    public User mapToUser(UserLoginDTO dto) {
-
-        User user = new User();
-
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
-//        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
 
         return user;
     }
