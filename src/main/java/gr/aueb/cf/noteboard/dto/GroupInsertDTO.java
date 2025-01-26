@@ -17,7 +17,7 @@ import java.util.Set;
 public class GroupInsertDTO {
 
     @NotEmpty(message = "Name is required")
-    @Size(max = 120, message = "Name must be less than 120 characters")
+    @Size(max = 40, message = "Name must be less than 40 characters")
     private String name;
 
     @NotEmpty(message = "Owner is required")

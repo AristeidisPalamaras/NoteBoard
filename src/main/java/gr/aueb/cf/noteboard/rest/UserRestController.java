@@ -57,6 +57,16 @@ public class UserRestController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    //get user by username
+    @GetMapping("/users/username/{username}")
+    public ResponseEntity<UserReadOnlyDTO> getUserByUsername(@PathVariable("username") String username)
+        throws AppObjectNotFoundException {
+
+        UserReadOnlyDTO user = userService.getUserByUsername(username);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     //post user
     @PostMapping("/users/save")
     public ResponseEntity<UserReadOnlyDTO> saveUser(
