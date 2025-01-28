@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthRestController {
+public class AuthRestControllerImpl implements IAuthRestController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthRestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthRestControllerImpl.class);
 
     private final AuthenticationService authenticationService;
 

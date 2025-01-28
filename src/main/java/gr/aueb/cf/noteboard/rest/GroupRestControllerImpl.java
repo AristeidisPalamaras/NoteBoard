@@ -21,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class GroupRestController {
+public class GroupRestControllerImpl implements IGroupRestController {
 
     private final IGroupService groupService;
     private final AuthorizationService authorizationService;

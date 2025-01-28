@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class ReactionRestController {
+public class ReactionRestControllerImpl implements IReactionRestController {
 
     private final IReactionService reactionService;
     private final AuthorizationService authorizationService;

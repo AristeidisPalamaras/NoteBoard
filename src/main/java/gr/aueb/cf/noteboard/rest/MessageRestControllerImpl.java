@@ -18,7 +18,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class MessageRestController {
+public class MessageRestControllerImpl implements IMessageRestController {
 
     private final IMessageService messageService;
     private final AuthorizationService authorizationService;

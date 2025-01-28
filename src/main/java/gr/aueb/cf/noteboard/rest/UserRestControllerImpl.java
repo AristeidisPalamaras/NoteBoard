@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class UserRestController {
+public class UserRestControllerImpl implements IUserRestController {
 
     private final IUserService userService;
     private final AuthorizationService authorizationService;
