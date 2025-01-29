@@ -1,6 +1,6 @@
 package gr.aueb.cf.noteboard.authentication;
 
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotAuthorizedException;
+import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.dto.AuthenticationRequestDTO;
 import gr.aueb.cf.noteboard.dto.AuthenticationResponseDTO;
 import gr.aueb.cf.noteboard.model.User;
@@ -21,14 +21,14 @@ public class AuthenticationService {
     private final UserRepository userRepository;
 
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO dto)
-            throws AppObjectNotAuthorizedException {
+            throws AppObjectNotFoundException {
         // Create an authentication token from username and password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
         );
 
         User user = userRepository.findUserByUsername(authentication.getName())
-                .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
 
         // If authentication was successful, generate JWT token
         String token = jwtService.generateToken(user.getUsername(), user.getId(), "ROLE_USER");

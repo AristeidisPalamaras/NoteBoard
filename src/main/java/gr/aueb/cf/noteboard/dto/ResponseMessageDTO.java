@@ -6,9 +6,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@Schema(description = "Data transfer object providing error information")
 public class ResponseMessageDTO {
 
+    @Schema(description = "The code of the error")
     private String code;
+
+    @Schema(description = "The description of the error")
     private String description;
 
     public ResponseMessageDTO(String code) {

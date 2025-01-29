@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+//@Builder
 @Table(name = "users")
 public class User extends AbstractEntity implements UserDetails {
 

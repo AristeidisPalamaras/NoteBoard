@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+//@Builder
 @Table(name = "message_user")
 public class Reaction extends AbstractEntity {
 

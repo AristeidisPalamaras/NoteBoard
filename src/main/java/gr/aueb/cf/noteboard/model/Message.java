@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+//@Builder
 @Table(name = "messages")
 public class Message extends AbstractEntity {
 

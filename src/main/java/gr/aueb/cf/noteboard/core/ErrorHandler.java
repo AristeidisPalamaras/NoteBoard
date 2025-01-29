@@ -43,7 +43,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({AppObjectInvalidArgumentException.class})
     public ResponseEntity<ResponseMessageDTO> handleConstraintViolationException(AppObjectInvalidArgumentException e, WebRequest request) {
-        return new ResponseEntity<>(new ResponseMessageDTO(e.getCode(), e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseMessageDTO(e.getCode(), e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler({AppObjectNotAuthorizedException.class})

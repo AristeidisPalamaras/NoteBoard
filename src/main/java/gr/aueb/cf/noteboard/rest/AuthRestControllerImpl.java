@@ -1,7 +1,7 @@
 package gr.aueb.cf.noteboard.rest;
 
 import gr.aueb.cf.noteboard.authentication.AuthenticationService;
-import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotAuthorizedException;
+import gr.aueb.cf.noteboard.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.noteboard.core.exceptions.ValidationException;
 import gr.aueb.cf.noteboard.dto.AuthenticationRequestDTO;
 import gr.aueb.cf.noteboard.dto.AuthenticationResponseDTO;
@@ -31,7 +31,7 @@ public class AuthRestControllerImpl implements IAuthRestController {
     public ResponseEntity<AuthenticationResponseDTO> authenticate(
             @Valid @RequestBody AuthenticationRequestDTO authenticationRequestDTO,
             BindingResult bindingResult)
-            throws AppObjectNotAuthorizedException, ValidationException {
+            throws AppObjectNotFoundException, ValidationException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);

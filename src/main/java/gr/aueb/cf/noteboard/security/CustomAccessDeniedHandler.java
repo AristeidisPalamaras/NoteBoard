@@ -1,5 +1,7 @@
 package gr.aueb.cf.noteboard.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.aueb.cf.noteboard.dto.ResponseMessageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,16 +11,17 @@ import java.io.IOException;
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException {
 
-        // Set the response status and content type
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        // Write a custom JSON response with the collected information
-        String jsonResponse = "{\"code\": \"userNotAuthorized\", \"description\": \"User is not allowed to visit this route.\"}";
-        response.getWriter().write(jsonResponse);
+        ResponseMessageDTO responseMessageDTO = new ResponseMessageDTO("UserNotAuthorized", "User is not allowed to visit this route");
+        response.getWriter().write(objectMapper.writeValueAsString(responseMessageDTO));
     }
 }

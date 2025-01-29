@@ -5,6 +5,7 @@ import gr.aueb.cf.noteboard.core.exceptions.*;
 import gr.aueb.cf.noteboard.dto.GroupInsertDTO;
 import gr.aueb.cf.noteboard.dto.GroupReadOnlyDTO;
 import gr.aueb.cf.noteboard.dto.GroupUpdateDTO;
+import gr.aueb.cf.noteboard.dto.GroupsByUserReadOnlyDTO;
 import gr.aueb.cf.noteboard.service.IGroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -28,21 +27,24 @@ public class GroupRestControllerImpl implements IGroupRestController {
 
     //get groups (owned and joined) by user
     @GetMapping("users/{userId}/groups")
-    public ResponseEntity<Map<String, Object>> getGroupsByUser(
+    public ResponseEntity<GroupsByUserReadOnlyDTO> getGroupsByUser(
             @PathVariable("userId") Long userId,
             Principal principal)
         throws  AppObjectNotFoundException, AppObjectNotAuthorizedException {
 
-        Map<String, Object> groups = new HashMap<>();
+        GroupsByUserReadOnlyDTO groups = new GroupsByUserReadOnlyDTO();
+//        Map<String, List<GroupReadOnlyDTO>> groups = new HashMap<>();
 
         //Logged-in user should not be able to see the group list of other users
         authorizationService.isPrincipalOrThrow(userId, principal);
 
         List<GroupReadOnlyDTO> ownedGroups = groupService.getGroupsByOwnerId(userId);
-        groups.put("ownedGroups", ownedGroups);
+        groups.setOwnedGroups(ownedGroups);
+        //        groups.put("ownedGroups", ownedGroups);
 
         List<GroupReadOnlyDTO> joinedGroups = groupService.getGroupsByMemberId(userId);
-        groups.put("joinedGroups", joinedGroups);
+        groups.setJoinedGroups(joinedGroups);
+        //        groups.put("joinedGroups", joinedGroups);
 
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
