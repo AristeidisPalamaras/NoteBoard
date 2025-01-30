@@ -111,7 +111,7 @@ public interface IReactionRestController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ValidationMessageDTO.class, example =
-                                    "{\"code\": \"ValidationErrors\", \"description\": {\"messageId\": \"The message is required\", \"user\": \"The user is required\"}}"))),
+                                    "{\"code\": \"ValidationErrors\", \"description\": {\"messageId\": \"Message is required\", \"user\": \"User is required\"}}"))),
             @ApiResponse(
                     responseCode = "404",
                     description = "Message not found. User not found.",

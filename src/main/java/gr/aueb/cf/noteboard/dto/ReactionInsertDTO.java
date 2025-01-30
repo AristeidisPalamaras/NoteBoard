@@ -16,15 +16,15 @@ import lombok.Setter;
 @Schema(description = "Data transfer object for reaction creation.")
 public class ReactionInsertDTO {
 
-    @NotNull(message = "The message is required")
+    @NotNull(message = "Message is required")
     @Schema(description = "The ID of the message that is reacted at.")
     private Long messageId;
 
-    @NotEmpty(message = "The user is required")
+    @NotEmpty(message = "User is required")
     @Schema(description = "The username of the user that is reacting to a message.")
     private String user;
 
-    @NotNull(message = "The escription is required")
+    @NotNull(message = "Description is required")
     @Schema(description = "The type of reaction.")
     private ReactionType description;
 }
