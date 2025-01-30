@@ -1,5 +1,7 @@
 package gr.aueb.cf.noteboard.authentication;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.aueb.cf.noteboard.dto.ResponseMessageDTO;
 import gr.aueb.cf.noteboard.security.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -28,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(
@@ -50,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             username = jwtService.extractSubject(jwt);
             userRole = jwtService.getStringClaim(jwt, "role");
 
-            System.out.println("JWT extracted.. ROLE: " + userRole);
+//            System.out.println("JWT extracted.. ROLE: " + userRole);
             System.out.println("JWT extracted.. ID: " + username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -71,15 +74,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             LOGGER.warn("WARN: Expired token ", e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json");
-            String jsonBody = "{\"code\": \"expiredToken\", \"message\": \"" + e.getMessage() + "\"}";
-            response.getWriter().write(jsonBody);
+            ResponseMessageDTO responseMessageDTO = new ResponseMessageDTO("ExpiredToken", e.getMessage());
+            response.getWriter().write(objectMapper.writeValueAsString(responseMessageDTO));
             return;
         } catch (Exception e) {
             LOGGER.warn("ERROR: something went wrong while parsing JWT", e);
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json");
-            String jsonBody = "{\"code\": \"invalidToken\", \"description\": \"" + e.getMessage() + "\"}";
-            response.getWriter().write(jsonBody);
+            ResponseMessageDTO responseMessageDTO = new ResponseMessageDTO("InvalidToken", e.getMessage());
+            response.getWriter().write(objectMapper.writeValueAsString(responseMessageDTO));
             return;
         }
         filterChain.doFilter(request, response);

@@ -16,10 +16,12 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    //    private String secretKey = System.getenv("SECRET_KEY");
+    // Generate a key and store it as an environment variable.
+    private String secretKey = System.getenv("SECRET_KEY");
 
-    //    Strong security 384-bits = 48 bytes = 64 Base64URL characters
-    private String secretKey = "5ce98d378ec88ea09ba8bcd511ef23645f04cc8e70b9134b98723a53c275bbc5";
+    // Hard-coded key (384-bits = 48 bytes = 64 Base64URL characters) .
+//     private String secretKey = "5ce98d378ec88ea09ba8bcd511ef23645f04cc8e70b9134b98723a53c275bbc5";
+
     private long jwtExpiration = 10800000;  // 3 hours in milliseconds
 
     public String generateToken(String username, Long userId, String role) {
@@ -29,7 +31,7 @@ public class JwtService {
         claims.put("role", role);
         return Jwts
                 .builder()
-                .setIssuer("self") // todo
+                .setIssuer("self")
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -73,15 +75,6 @@ public class JwtService {
                 .getBody();
     }
 
-    /**
-     * Creates a HS256 Key. Key is an interface.
-     * Starting from secretKey we get a byte array
-     * of the secret. Then we get the {@link javax.crypto.SecretKey,
-     * class that implements the {@link Key } interface.
-     *
-     *
-     * @return  a SecretKey which implements Key.
-     */
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
