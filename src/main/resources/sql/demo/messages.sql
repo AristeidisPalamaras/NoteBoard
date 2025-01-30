@@ -1,4 +1,4 @@
-USE noteboardDB;
+-- USE noteboardDB;
 
 INSERT INTO `messages` VALUES
                            (1, '2025-01-29 21:10:47.222300', '2025-01-29 21:10:47.222300', 'Sed vulputate faucibus rhoncus. Cras et.', null, 1, 1),
