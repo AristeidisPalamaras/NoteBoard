@@ -1,4 +1,4 @@
-USE noteboardDB;
+-- USE noteboardDB;
 
 INSERT INTO `group_user` VALUES
                              (1, 2),

@@ -1,4 +1,4 @@
-USE noteboardDB;
+-- USE noteboardDB;
 
 INSERT INTO `users` VALUES
                         (1, '2025-01-29 21:10:47.222300', '2025-01-29 21:10:47.222300', '$2a$11$wzgtAnpsWFBPjKOoer.MYum92OpQjle4hv56JOwfRJgRhRK33cnOS', 'user1@example.com', null),
